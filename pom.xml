@@ -22,12 +22,7 @@
 		<module>paymentAPI</module>
 	</modules>
 	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-			<scope>provided</scope>
-		</dependency>
+
 	</dependencies>
 
 
