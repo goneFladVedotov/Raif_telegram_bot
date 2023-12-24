@@ -36,11 +36,11 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>raiffeisen</groupId>
             <artifactId>sbp-sdk-java</artifactId>
@@ -80,16 +80,38 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <groupId>raiffeisen</groupId>
+                    <artifactId>sbp-sdk-java</artifactId>
+                    <version>1.0.8</version>
+                    <packaging>jar</packaging>
+                    <file>dependencies/sbp-sdk-java-1.0.8.jar</file>
+                    <generatePom>false</generatePom>
+                    <pomFile>dependencies/pom.xml</pomFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-jar-lib</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <phase>validate</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
-    <distributionManagement>
+    <!--<distributionManagement>
         <repository>
             <id>github</id>
             <name>Github of AO Raiffeisen</name>
             <url>https://maven.pkg.github.com/raiffeisen-dgtl/sbp-sdk-java</url>
         </repository>
-    </distributionManagement>
+    </distributionManagement>-->
 
 </project>

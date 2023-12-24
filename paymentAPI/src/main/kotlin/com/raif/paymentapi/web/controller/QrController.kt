@@ -1,4 +1,4 @@
-package com.raif.paymentapi.controller
+package com.raif.paymentapi.web.controller
 
 import com.raif.paymentapi.domain.dto.QrDto
 import org.springframework.http.ResponseEntity

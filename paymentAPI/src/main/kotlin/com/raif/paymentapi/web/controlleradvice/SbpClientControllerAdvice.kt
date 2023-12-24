@@ -1,4 +1,4 @@
-package com.raif.paymentapi.controlleradvice
+package com.raif.paymentapi.web.controlleradvice
 
 import org.springframework.http.ResponseEntity
 import raiffeisen.sbp.sdk.exception.ContractViolationException

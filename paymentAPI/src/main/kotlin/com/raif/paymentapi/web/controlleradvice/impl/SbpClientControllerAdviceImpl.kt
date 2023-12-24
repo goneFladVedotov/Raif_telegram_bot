@@ -1,10 +1,8 @@
-package com.raif.paymentapi.controlleradvice.impl
+package com.raif.paymentapi.web.controlleradvice.impl
 
-import com.raif.paymentapi.controlleradvice.SbpClientControllerAdvice
-import org.springframework.http.HttpStatus
+import com.raif.paymentapi.web.controlleradvice.SbpClientControllerAdvice
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import raiffeisen.sbp.sdk.exception.ContractViolationException
 import raiffeisen.sbp.sdk.exception.SbpException

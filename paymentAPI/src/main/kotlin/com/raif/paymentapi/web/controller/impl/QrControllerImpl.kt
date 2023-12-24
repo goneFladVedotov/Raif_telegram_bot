@@ -1,6 +1,6 @@
-package com.raif.paymentapi.controller.impl
+package com.raif.paymentapi.web.controller.impl
 
-import com.raif.paymentapi.controller.QrController
+import com.raif.paymentapi.web.controller.QrController
 import com.raif.paymentapi.domain.dto.QrDto
 import com.raif.paymentapi.service.QrService
 import jakarta.validation.Valid
