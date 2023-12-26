@@ -1,8 +1,8 @@
 package com.raif.paymentapi.service
 
-import com.raif.paymentapi.domain.dto.QrDto
+import com.raif.paymentapi.domain.dto.QrDynamicDto
 import raiffeisen.sbp.sdk.model.`in`.QRUrl
 
 interface QrService {
-    fun registerQr(qrDto: QrDto): QRUrl
+    fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl
 }

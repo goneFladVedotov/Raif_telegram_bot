@@ -9,4 +9,5 @@ interface SbpClientControllerAdvice {
     fun handleIO(e: IOException):ResponseEntity<*>
     fun handleSbp(e: SbpException): ResponseEntity<*>
     fun handleContractViolation(e: ContractViolationException): ResponseEntity<*>
+    fun handle(e: Exception): ResponseEntity<*>
 }

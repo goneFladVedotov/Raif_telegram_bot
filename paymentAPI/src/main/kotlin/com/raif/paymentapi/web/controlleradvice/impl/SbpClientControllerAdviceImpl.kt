@@ -24,4 +24,10 @@ class SbpClientControllerAdviceImpl: SbpClientControllerAdvice {
     override fun handleContractViolation(e: ContractViolationException): ResponseEntity<*> {
         return ResponseEntity.badRequest().body(e.message)
     }
+
+    @ExceptionHandler(Exception::class)
+    override fun handle(e: Exception): ResponseEntity<*> {
+        e.printStackTrace()
+        return ResponseEntity.internalServerError().body(e.message)
+    }
 }
