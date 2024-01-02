@@ -2,6 +2,7 @@ package com.raif.paymentapi.web.controlleradvice.impl
 
 import com.raif.paymentapi.web.controlleradvice.SbpClientControllerAdvice
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import raiffeisen.sbp.sdk.exception.ContractViolationException
@@ -22,6 +23,11 @@ class SbpClientControllerAdviceImpl: SbpClientControllerAdvice {
 
     @ExceptionHandler(ContractViolationException::class)
     override fun handleContractViolation(e: ContractViolationException): ResponseEntity<*> {
+        return ResponseEntity.badRequest().body(e.message)
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    override fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException): ResponseEntity<*> {
         return ResponseEntity.badRequest().body(e.message)
     }
 
