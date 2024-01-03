@@ -10,8 +10,14 @@ https://pay.raif.ru/doc/sbp.html#tag/qr-creation
 
 Также обязательными параметрами у каждого из типов QR являются merchantId и secretKey
 
-2) Добавлена поддержка Swagger
-3) Добавлена обработка исключений SbpClient
+2) API может предоставлять информацию о QR
+
+Запрос отправляется по адресу: api/v1/qrs/{qrId}
+
+В теле запроса указываются merchandId и secretKey
+
+3) Добавлена поддержка Swagger
+4) Добавлена обработка исключений SbpClient
 
 
 
