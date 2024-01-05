@@ -5,8 +5,8 @@ target/
 !**/src/test/**/target/
 
 ### local files ###
-*/src/main/resources/local.config.json
-*/local.*/
+telegram_wrapper/**/local.*
+telegram_wrapper/**/local.*/
 
 
 ### STS ###
