@@ -22,6 +22,11 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+
+        <repository>
+            <id>io.jitpack</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <build>
@@ -69,6 +74,16 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>io.github.kotlin-telegram-bot.kotlin-telegram-bot</groupId>
+            <artifactId>dispatcher</artifactId>
+            <version>6.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>klaxon</artifactId>
+            <version>5.5</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
