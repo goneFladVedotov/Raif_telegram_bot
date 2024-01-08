@@ -19,6 +19,7 @@
 		<kotlin.version>1.9.20</kotlin.version>
 	</properties>
 	<modules>
+		<module>databaseAPI</module>
 		<module>paymentAPI</module>
 	</modules>
 	<dependencies>
