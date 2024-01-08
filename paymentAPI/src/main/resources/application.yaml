@@ -1,2 +1,21 @@
 server:
   port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/first_db?currentSchema=payment
+    username: postgres
+    password: 1488
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  liquibase:
+    change-log: classpath:/liquibase/db.changelog-1.0.yaml
+    enabled: true
+    default-schema: payment
+  task:
+    scheduling:
+      pool:
+        size: 2
