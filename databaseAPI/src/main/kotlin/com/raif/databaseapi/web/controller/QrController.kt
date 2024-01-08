@@ -1,4 +1,4 @@
-package com.raif.databaseapi.controller
+package com.raif.databaseapi.web.controller
 
 import com.raif.databaseapi.domain.QrInfo
 import org.springframework.http.ResponseEntity

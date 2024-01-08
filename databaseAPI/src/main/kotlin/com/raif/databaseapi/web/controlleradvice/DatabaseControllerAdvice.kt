@@ -1,4 +1,4 @@
-package com.raif.databaseapi.`controller-advice`
+package com.raif.databaseapi.web.controlleradvice
 
 import com.raif.databaseapi.exception.ResourceNotFoundException
 import org.springframework.http.ResponseEntity
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
-class BaseControllerAdvice {
+class DatabaseControllerAdvice {
 
     @ExceptionHandler(ResourceNotFoundException::class)
     fun handleResourceNotFound(e: ResourceNotFoundException): ResponseEntity<*> {
