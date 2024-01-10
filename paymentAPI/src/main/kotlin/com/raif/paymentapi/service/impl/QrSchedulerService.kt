@@ -7,6 +7,7 @@ import com.raif.paymentapi.service.QrService
 import com.raif.paymentapi.service.SchedulerService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import raiffeisen.sbp.sdk.model.PaymentNotification
 
 @Service
 class QrSchedulerService(

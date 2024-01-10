@@ -3,10 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.raif</groupId>
+        <artifactId>telegram_bot_demo_2</artifactId>
+        <version>0.0.1-SNAPSHOT</version> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.raif</groupId>
     <artifactId>paymentAPI</artifactId>
@@ -137,6 +136,14 @@
                         <phase>validate</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <projectsDirectory>../</projectsDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>
