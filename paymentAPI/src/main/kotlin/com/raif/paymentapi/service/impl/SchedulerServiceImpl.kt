@@ -7,17 +7,16 @@ import com.raif.paymentapi.service.QrService
 import com.raif.paymentapi.service.SchedulerService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import raiffeisen.sbp.sdk.model.PaymentNotification
 
 @Service
-class QrSchedulerService(
+class SchedulerServiceImpl(
     private val qrKeyRepository: QrKeyRepository,
     private val qrService: QrService
 ) : SchedulerService {
     private val databaseApiClient: DatabaseApiClient = QrDatabaseApiClient()
 
     @Scheduled(fixedDelay = 5000)
-    override fun updateInfo() {
+    override fun updateQrInfo() {
         val qrKeys = qrKeyRepository.findAll()
         if (qrKeys.isEmpty())
             return
