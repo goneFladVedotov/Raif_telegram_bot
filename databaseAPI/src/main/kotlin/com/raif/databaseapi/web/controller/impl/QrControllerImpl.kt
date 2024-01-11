@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -20,7 +21,7 @@ class QrControllerImpl(
     @PostMapping
     override fun saveQrInfo(@RequestBody qrInfo: QrInfo): ResponseEntity<*> {
         qrService.saveQrInfo(qrInfo)
-        return ResponseEntity.ok(qrService.saveQrInfo(qrInfo))
+        return ResponseEntity.ok(null)
     }
 
     @GetMapping("/{qrId}")
@@ -29,8 +30,8 @@ class QrControllerImpl(
     }
 
     @PutMapping
-    override fun updateQrInfo(@RequestBody qrInfo: QrInfo): ResponseEntity<*> {
-        return ResponseEntity.ok(qrService.updateQrInfo(qrInfo))
+    override fun updateQrStatus(@RequestParam("id") qrId: String, @RequestParam("status") qrStatus: String): ResponseEntity<*> {
+        qrService.updateQrInfo(qrId, qrStatus)
+        return ResponseEntity.ok(null)
     }
-
 }
