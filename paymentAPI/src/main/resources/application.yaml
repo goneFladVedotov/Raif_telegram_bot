@@ -1,6 +1,14 @@
 server:
   port: 8081
 
+
+
+notification:
+  callback:
+    value: "https://pay-test.raif.ru/api/settings/v1/callback"
+  url:
+    value: "http://localhost:8081/payment-api/v1/notification"
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/first_db?currentSchema=payment
