@@ -6,5 +6,6 @@ import org.springframework.http.ResponseEntity
 interface QrController {
     fun saveQrInfo(qrInfo: QrInfo): ResponseEntity<*>
     fun getQrInfo(qrId: String): ResponseEntity<*>
+    fun getAll(): ResponseEntity<*>
     fun updateQrStatus(qrId: String, qrStatus: String): ResponseEntity<*>
 }

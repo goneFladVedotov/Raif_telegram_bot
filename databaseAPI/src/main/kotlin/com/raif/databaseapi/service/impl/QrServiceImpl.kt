@@ -20,6 +20,10 @@ class QrServiceImpl (
         return qrInfo?:throw ResourceNotFoundException("QrInfo not found")
     }
 
+    override fun getAll(): List<QrInfo> {
+        return qrRepository.findAll()
+    }
+
     @Transactional
     override fun updateQrInfo(qrId: String, qrStatus: String) {
         val qrInfoToUpdate = qrRepository.findByQrId(qrId)
