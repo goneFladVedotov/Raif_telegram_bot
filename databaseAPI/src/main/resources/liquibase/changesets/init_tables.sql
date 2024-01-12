@@ -1,3 +1,5 @@
+create schema if not exists database;
+
 set search_path to database;
 
 create table if not exists qr_info
@@ -34,4 +36,4 @@ create table if not exists refund_info
     status varchar(255),
     payment_details varchar(255),
     transaction_id varchar(255)
-)
+);
