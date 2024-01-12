@@ -2,7 +2,7 @@ create schema if not exists database;
 
 set search_path to database;
 
-create table if not exists qr_info
+create table if not exists database.qr_info
 (
     id        bigserial primary key,
     qr_id     varchar(255) not null,
@@ -11,7 +11,7 @@ create table if not exists qr_info
     qr_url    varchar(255) not null
 );
 
-create table if not exists payment_info
+create table if not exists database.payment_info
 (
     id               bigserial primary key,
     additional_info  varchar(255),
@@ -27,7 +27,7 @@ create table if not exists payment_info
     transaction_id   bigserial
 );
 
-create table if not exists refund_info
+create table if not exists database.refund_info
 (
     id bigserial primary key,
     amount decimal,
