@@ -35,5 +35,5 @@ create table if not exists database.refund_info
     refund_id varchar(255),
     status varchar(255),
     payment_details varchar(255),
-    transaction_id varchar(255)
+    transaction_id bigserial
 );
