@@ -13,19 +13,22 @@ class SchedulerServiceImpl(
     private val qrKeyRepository: QrKeyRepository,
     private val qrService: QrService
 ) : SchedulerService {
-    private val databaseApiClient: DatabaseApiClient = QrDatabaseApiClient()
+    private val databaseApiClient: DatabaseApiClient = DatabaseApiClientImpl()
 
     @Scheduled(fixedDelay = 5000)
     override fun updateQrInfo() {
         val qrKeys = qrKeyRepository.findAll()
         if (qrKeys.isEmpty())
             return
-        val qrInfoList = qrKeys.map { qrService.getQrInfo(it.qrId, SbpClientDto(it.merchantId, it.secretKey)) }
-        for (info in qrInfoList) {
-            if (info.qrStatus != "NEW" && info.qrStatus != "IN_PROGRESS") {
-                qrKeyRepository.deleteByQrId(info.qrId)
+        for (key in qrKeys) {
+            val sbpClientDto = SbpClientDto(key.merchantId, key.secretKey)
+            val qrInfo = qrService.getQrInfo(key.qrId, sbpClientDto)
+            if (qrInfo.qrStatus != "NEW" && qrInfo.qrStatus != "IN_PROGRESS") {
+                qrKeyRepository.deleteByQrId(qrInfo.qrId)
             }
-            databaseApiClient.update(info)
+            databaseApiClient.update(qrInfo)
+            val paymentInfo = qrService.getPaymentInfo(key.qrId, sbpClientDto)
+            databaseApiClient.update(paymentInfo)
         }
     }
 }

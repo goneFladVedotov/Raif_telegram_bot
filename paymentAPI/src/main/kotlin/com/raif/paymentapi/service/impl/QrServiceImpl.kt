@@ -5,6 +5,7 @@ import com.raif.paymentapi.domain.dto.QrDynamicDto
 import com.raif.paymentapi.domain.dto.QrStaticDto
 import com.raif.paymentapi.domain.dto.QrVariableDto
 import com.raif.paymentapi.domain.dto.SbpClientDto
+import com.raif.paymentapi.domain.model.PaymentInformation
 import com.raif.paymentapi.domain.model.QrInformation
 import com.raif.paymentapi.domain.model.QrKey
 import com.raif.paymentapi.service.DatabaseApiClient
@@ -21,7 +22,7 @@ import raiffeisen.sbp.sdk.model.out.QRVariable
 class QrServiceImpl(
     private val qrKeyRepository: QrKeyRepository
 ) : QrService {
-    private val databaseApiClient: DatabaseApiClient = QrDatabaseApiClient()
+    private val databaseApiClient: DatabaseApiClient = DatabaseApiClientImpl()
 
     override fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl {
         val sbpClient = SbpClient(SbpClient.TEST_URL, qrDynamicDto.sbpMerchantId, qrDynamicDto.secretKey)
@@ -65,5 +66,24 @@ class QrServiceImpl(
         val id = QRId(qrId)
         val qrInfo = sbpClient.getQRInfo(id)
         return QrInformation(qrInfo.qrId, qrInfo.qrStatus, qrInfo.payload, qrInfo.qrUrl)
+    }
+
+    override fun getPaymentInfo(qrId: String, sbpClientDto: SbpClientDto): PaymentInformation {
+        val sbpClient = SbpClient(SbpClient.TEST_URL, sbpClientDto.merchantId, sbpClientDto.secretKey)
+        val id = QRId(qrId)
+        val paymentInfo = sbpClient.getPaymentInfo(id)
+        return PaymentInformation(
+            paymentInfo.additionalInfo,
+            paymentInfo.amount,
+            paymentInfo.createDate,
+            paymentInfo.additionalInfo,
+            paymentInfo.merchantId,
+            paymentInfo.order,
+            paymentInfo.paymentStatus,
+            paymentInfo.qrId,
+            sbpClientDto.merchantId,
+            paymentInfo.transactionDate,
+            paymentInfo.transactionId
+        )
     }
 }

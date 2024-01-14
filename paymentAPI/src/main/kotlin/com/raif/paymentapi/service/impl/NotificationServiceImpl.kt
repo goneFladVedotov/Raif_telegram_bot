@@ -4,6 +4,8 @@ import com.raif.paymentapi.service.NotificationService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import raiffeisen.sbp.sdk.model.PaymentNotification
+import raiffeisen.sbp.sdk.util.SbpUtil
 
 @Service
 class NotificationServiceImpl(
