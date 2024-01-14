@@ -7,4 +7,5 @@ interface PaymentController {
     fun savePaymentInfo(paymentInfo: PaymentInfo): ResponseEntity<*>
     fun updatePaymentInfo(qrId: String, paymentStatus: String): ResponseEntity<*>
     fun getPaymentInfo(qrId: String): ResponseEntity<*>
+    fun getAll(): ResponseEntity<*>
 }

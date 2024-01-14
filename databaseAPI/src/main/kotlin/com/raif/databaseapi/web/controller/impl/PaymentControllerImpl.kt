@@ -36,4 +36,9 @@ class PaymentControllerImpl(
         return ResponseEntity.ok(paymentService.getPaymentInfo(qrId))
     }
 
+    @GetMapping
+    override fun getAll(): ResponseEntity<*> {
+        return ResponseEntity.ok(paymentService.getAll())
+    }
+
 }

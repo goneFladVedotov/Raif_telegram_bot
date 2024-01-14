@@ -35,4 +35,9 @@ class RefundControllerImpl(
     override fun getRefundInfo(@PathVariable("refundId") refundId: String): ResponseEntity<RefundInfo> {
         return ResponseEntity.ok(refundService.getRefundInfo(refundId))
     }
+
+    @GetMapping
+    override fun getAll(): ResponseEntity<*> {
+        return ResponseEntity.ok(refundService.getAll())
+    }
 }

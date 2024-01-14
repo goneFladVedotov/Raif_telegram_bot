@@ -27,4 +27,8 @@ class RefundServiceImpl(
         return refundRepository.findByRefundId(refundId) ?:
         throw ResourceNotFoundException("refund info not found")
     }
+
+    override fun getAll(): List<RefundInfo> {
+        return refundRepository.findAll()
+    }
 }

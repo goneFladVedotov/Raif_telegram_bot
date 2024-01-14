@@ -27,4 +27,8 @@ class PaymentServiceImpl(
         return paymentRepository.findByQrId(qrId)?:
         throw ResourceNotFoundException("payment info not found")
     }
+
+    override fun getAll(): List<PaymentInfo> {
+        return paymentRepository.findAll()
+    }
 }

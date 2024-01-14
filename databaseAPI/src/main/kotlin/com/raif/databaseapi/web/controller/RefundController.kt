@@ -7,4 +7,5 @@ interface RefundController {
     fun saveRefundInfo(refundInfo: RefundInfo): ResponseEntity<*>
     fun updateRefundStatus(refundId: String, refundStatus: String): ResponseEntity<*>
     fun getRefundInfo(refundId: String): ResponseEntity<RefundInfo>
+    fun getAll(): ResponseEntity<*>
 }
