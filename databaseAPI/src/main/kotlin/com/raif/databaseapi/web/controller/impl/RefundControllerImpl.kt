@@ -24,9 +24,9 @@ class RefundControllerImpl(
         return ResponseEntity.ok(null)
     }
 
-    @PutMapping
-    override fun updateRefundStatus(@RequestParam(name = "refundId") refundId: String,
-                                    @RequestParam(name = "refundStatus") refundStatus: String): ResponseEntity<*> {
+    @PutMapping("/{refundId}")
+    override fun updateRefundStatus(@PathVariable("refundId") refundId: String,
+                                    @RequestBody refundStatus: String): ResponseEntity<*> {
         refundService.updateRefundStatus(refundId, refundStatus)
         return ResponseEntity.ok(null)
     }
