@@ -9,6 +9,7 @@ import com.raif.paymentapi.service.RefundService
 import com.raif.paymentapi.service.SchedulerService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SchedulerServiceImpl(
@@ -20,6 +21,7 @@ class SchedulerServiceImpl(
     private val databaseApiClient: DatabaseApiClient = DatabaseApiClientImpl()
 
     @Scheduled(fixedDelay = 5000)
+    @Transactional
     override fun updateQrInfo() {
         val qrKeys = qrKeyRepository.findAll()
         if (qrKeys.isEmpty())
@@ -37,6 +39,7 @@ class SchedulerServiceImpl(
     }
 
     @Scheduled(fixedDelay = 5000)
+    @Transactional
     override fun updateRefundStatus() {
         val refundKeys = refundKeyRepository.findAll()
         if (refundKeys.isEmpty()) {
