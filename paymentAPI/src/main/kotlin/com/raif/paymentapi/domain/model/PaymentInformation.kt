@@ -16,5 +16,4 @@ data class PaymentInformation(
     val transactionDate: ZonedDateTime,
     val transactionId: Long
 ) {
-    val id: Long = 0
 }

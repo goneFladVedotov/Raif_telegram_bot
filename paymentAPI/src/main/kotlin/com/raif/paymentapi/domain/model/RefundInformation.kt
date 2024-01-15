@@ -9,5 +9,4 @@ data class RefundInformation(
     val paymentDetails: String?,
     val transactionId: Long
 ) {
-    val id: Long = 0
 }

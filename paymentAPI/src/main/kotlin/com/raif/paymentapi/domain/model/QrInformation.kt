@@ -6,5 +6,4 @@ data class QrInformation(
     var payload: String,
     var qrUrl: String
 ) {
-    var id: Long = 0
 }
