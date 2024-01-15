@@ -2,7 +2,6 @@ package com.raif.paymentapi.service
 
 import com.raif.paymentapi.domain.dto.RefundDto
 import com.raif.paymentapi.domain.dto.SbpClientDto
-import com.raif.paymentapi.domain.model.RefundInformation
 import raiffeisen.sbp.sdk.model.`in`.RefundStatus
 
 interface RefundService {
