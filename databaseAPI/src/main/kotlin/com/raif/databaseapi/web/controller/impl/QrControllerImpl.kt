@@ -34,8 +34,8 @@ class QrControllerImpl(
         return ResponseEntity.ok(qrService.getAll())
     }
 
-    @PutMapping
-    override fun updateQrStatus(@RequestParam("id") qrId: String, @RequestParam("status") qrStatus: String): ResponseEntity<*> {
+    @PutMapping("/{qrId}")
+    override fun updateQrStatus(@PathVariable("qrId") qrId: String, @RequestBody qrStatus: String): ResponseEntity<*> {
         qrService.updateQrInfo(qrId, qrStatus)
         return ResponseEntity.ok(null)
     }
