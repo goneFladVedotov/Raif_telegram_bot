@@ -34,7 +34,7 @@ class SchedulerServiceImpl(
             }
             databaseApiClient.update("http://localhost:9091/database-api/v1/qrs/", qrInfo.qrId, qrInfo.qrStatus)
             val paymentInfo = qrService.getPaymentInfo(key.qrId, sbpClientDto)
-            databaseApiClient.update("http://localhost:9091/database-api/v1/qrs/", paymentInfo.qrId, paymentInfo.paymentStatus)
+            databaseApiClient.update("http://localhost:9091/database-api/v1/payments/", paymentInfo.qrId, paymentInfo.paymentStatus)
         }
     }
 
