@@ -33,24 +33,10 @@ class DatabaseApiClientImpl : DatabaseApiClient {
         }
     }
 
-    override fun update(qrInformation: QrInformation) {
+    override fun update(url: String, id: String, status: String) {
         restTemplate.put(
-            "http://localhost:9091/database-api/v1/qrs",
-            qrInformation
-        )
-    }
-
-    override fun update(paymentInformation: PaymentInformation) {
-        restTemplate.put(
-            "http://localhost:9091/database-api/v1/payments/${paymentInformation.qrId}",
-            paymentInformation
-        )
-    }
-
-    override fun update(refundId: String, refundStatus: String) {
-        restTemplate.put(
-            "http://localhost:9091/database-api/v1/refund/${refundId}",
-            "{\"status\": \"${refundStatus}\"}"
+            url + id,
+            status
         )
     }
 }

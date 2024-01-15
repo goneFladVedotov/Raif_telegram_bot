@@ -32,9 +32,9 @@ class SchedulerServiceImpl(
             if (qrInfo.qrStatus != "NEW" && qrInfo.qrStatus != "IN_PROGRESS") {
                 qrKeyRepository.deleteByQrId(qrInfo.qrId)
             }
-            databaseApiClient.update(qrInfo)
+            databaseApiClient.update("http://localhost:9091/database-api/v1/qrs/", qrInfo.qrId, qrInfo.qrStatus)
             val paymentInfo = qrService.getPaymentInfo(key.qrId, sbpClientDto)
-            databaseApiClient.update(paymentInfo)
+            databaseApiClient.update("http://localhost:9091/database-api/v1/qrs/", paymentInfo.qrId, paymentInfo.paymentStatus)
         }
     }
 
@@ -51,7 +51,7 @@ class SchedulerServiceImpl(
             if (refundStatus.refundStatus != "IN_PROGRESS") {
                 refundKeyRepository.deleteByRefundId(key.refundId)
             }
-            databaseApiClient.update(key.refundId, refundStatus.refundStatus)
+            databaseApiClient.update("http://localhost:9091/database-api/v1/refund/", key.refundId, refundStatus.refundStatus)
         }
     }
 }
