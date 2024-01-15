@@ -5,4 +5,6 @@ data class QrInformation(
     var qrStatus: String,
     var payload: String,
     var qrUrl: String
-)
+) {
+    var id: Long = 0
+}

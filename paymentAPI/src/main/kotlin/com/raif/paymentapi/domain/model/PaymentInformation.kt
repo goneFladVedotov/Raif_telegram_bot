@@ -15,4 +15,6 @@ data class PaymentInformation(
     val sbpMerchantId: String,
     val transactionDate: ZonedDateTime,
     val transactionId: Long
-)
+) {
+    val id: Long = 0
+}

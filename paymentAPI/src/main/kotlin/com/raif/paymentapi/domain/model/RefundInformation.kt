@@ -8,4 +8,6 @@ data class RefundInformation(
     val refundId: String,
     val paymentDetails: String?,
     val transactionId: Long
-)
+) {
+    val id: Long = 0
+}
