@@ -3,7 +3,9 @@ package com.raif.databaseapi.mapper.impl
 import com.raif.databaseapi.domain.QrInfo
 import com.raif.databaseapi.mapper.Mapper
 import com.raif.databaseapi.web.dto.QrInfoDto
+import org.springframework.stereotype.Service
 
+@Service
 class QrInfoMapper: Mapper<QrInfo, QrInfoDto> {
     override fun entityToDto(entity: QrInfo): QrInfoDto {
         val dto = QrInfoDto(entity.qrId, entity.qrStatus, entity.payload, entity.qrUrl)

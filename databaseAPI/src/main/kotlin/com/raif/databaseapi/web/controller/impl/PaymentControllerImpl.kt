@@ -1,18 +1,23 @@
 package com.raif.databaseapi.web.controller.impl
 
 import com.raif.databaseapi.domain.PaymentInfo
+import com.raif.databaseapi.mapper.Mapper
 import com.raif.databaseapi.service.PaymentService
 import com.raif.databaseapi.web.controller.PaymentController
+import com.raif.databaseapi.web.dto.PaymentInfoDto
+import com.raif.databaseapi.web.dto.RefundInfoDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("database-api/v1/payments")
 class PaymentControllerImpl(
-    private val paymentService: PaymentService
+    private val paymentService: PaymentService,
+    private val mapper: Mapper<PaymentInfo, PaymentInfoDto>
 ): PaymentController {
     @PostMapping
-    override fun savePaymentInfo(@RequestBody paymentInfo: PaymentInfo): ResponseEntity<*> {
+    override fun savePaymentInfo(@RequestBody paymentInfoDto: PaymentInfoDto): ResponseEntity<*> {
+        val paymentInfo = mapper.dtoToEntity(paymentInfoDto)
         paymentService.savePaymentInfo(paymentInfo)
         return ResponseEntity.ok(null)
     }
@@ -26,7 +31,8 @@ class PaymentControllerImpl(
 
     @GetMapping("/{qrId}")
     override fun getPaymentInfo(@PathVariable("qrId") qrId: String): ResponseEntity<*> {
-        return ResponseEntity.ok(paymentService.getPaymentInfo(qrId))
+        val paymentInfoDto = mapper.entityToDto(paymentService.getPaymentInfo(qrId))
+        return ResponseEntity.ok(paymentInfoDto)
     }
 
     @GetMapping
