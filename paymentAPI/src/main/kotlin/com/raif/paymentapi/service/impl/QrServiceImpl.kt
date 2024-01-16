@@ -17,6 +17,8 @@ import raiffeisen.sbp.sdk.model.out.QRDynamic
 import raiffeisen.sbp.sdk.model.out.QRId
 import raiffeisen.sbp.sdk.model.out.QRStatic
 import raiffeisen.sbp.sdk.model.out.QRVariable
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Service
 class QrServiceImpl(
@@ -34,6 +36,21 @@ class QrServiceImpl(
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
         qrKeyRepository.save(QrKey(qrUrl.qrId, qrDynamicDto.secretKey, qrDynamicDto.sbpMerchantId))
+        databaseApiClient.save(
+            PaymentInformation(
+                qrDynamicDto.additionalInfo?:"",
+                qrDynamicDto.amount,
+                ZonedDateTime.now(),
+                qrDynamicDto.currency?:"",
+                0,
+                qrDynamicDto.order,
+                qrDynamicDto.paymentDetails?:"",
+                qrUrl.qrId,
+                qrDynamicDto.sbpMerchantId,
+                ZonedDateTime.now(),
+                0
+            )
+        )
         return qrUrl
     }
 
