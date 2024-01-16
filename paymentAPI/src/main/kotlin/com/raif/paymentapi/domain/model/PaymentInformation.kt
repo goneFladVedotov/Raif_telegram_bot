@@ -8,7 +8,6 @@ data class PaymentInformation(
     val amount: BigDecimal,
     val createDate: ZonedDateTime,
     val currency: String,
-    val merchantId: Long,
     val order: String,
     val paymentStatus: String,
     val qrId: String,
