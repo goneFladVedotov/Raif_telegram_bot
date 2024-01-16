@@ -12,7 +12,7 @@ import org.springframework.web.client.RestClientException
 class DatabaseControllerAdviceImpl: DatabaseControllerAdvice {
     @ExceptionHandler(DatabaseRequestException::class)
     override fun handleDatabaseRequest(e: DatabaseRequestException): ResponseEntity<*> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
+        return ResponseEntity.badRequest().body(e.message)
     }
 
     @ExceptionHandler(RestClientException::class)
