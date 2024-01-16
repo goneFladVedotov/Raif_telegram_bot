@@ -29,11 +29,11 @@ create table if not exists database.payment_info
 
 create table if not exists database.refund_info
 (
-    id bigserial primary key,
-    amount decimal,
-    order_info varchar(255),
-    refund_id varchar(255),
-    status varchar(255),
+    id              bigserial primary key,
+    amount          decimal,
+    order_info      varchar(255),
+    refund_id       varchar(255),
+    status          varchar(255),
     payment_details varchar(255),
-    transaction_id bigserial
+    transaction_id  bigserial
 );
