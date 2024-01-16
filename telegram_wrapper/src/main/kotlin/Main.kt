@@ -6,10 +6,13 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.TelegramFile
 import com.github.kotlintelegrambot.extensions.filters.Filter
 import java.io.IOException
 
+
 fun main() {
+
     val parser: Parser = Parser.default()
     val jsonData = object {}.javaClass.getResourceAsStream("/local.config.json")
         ?: throw IOException("can't find config file")
@@ -34,9 +37,11 @@ fun main() {
                     }
                 }
                 if (isPrice) {
-                    bot.sendMessage(
+                    val data = khttp.post("http://185.195.25.33:8081/api/v1/qrs/dynamic", mapOf("Content-Type" to "application/json"), data = "{\"amount\":123, \"order\":\"test1234523525\"}").jsonObject
+                    bot.sendPhoto(
                         chatId = ChatId.fromId(message.chat.id),
-                        text = "You have entered a valid price: $msg"
+                        photo = TelegramFile.ByUrl(data["qrUrl"].toString()),
+                        caption = "You have entered a valid price: $msg.",
                     )
                 } else {
                     bot.sendMessage(
