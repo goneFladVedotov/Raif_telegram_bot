@@ -12,6 +12,7 @@ import raiffeisen.sbp.sdk.client.SbpClient
 import raiffeisen.sbp.sdk.model.`in`.RefundStatus
 import raiffeisen.sbp.sdk.model.out.RefundId
 import raiffeisen.sbp.sdk.model.out.RefundInfo
+import java.lang.IllegalStateException
 import java.util.UUID
 
 @Service
@@ -28,6 +29,9 @@ class RefundServiceImpl(
         )
         refundInfo.paymentDetails = refundDto.paymentDetails
         val response = sbpClient.refundPayment(refundInfo)
+        if (response == null) {
+            throw IllegalStateException("huyna")
+        }
         databaseApiClient.save(RefundInformation(refundDto.amount, refundDto.orderId, refundDto.refundId, refundDto.paymentDetails, UUID.randomUUID().timestamp()))
         refundKeyRepository.save(RefundKey(refundDto.refundId, refundDto.secretKey, refundDto.merchantId))
         return response
