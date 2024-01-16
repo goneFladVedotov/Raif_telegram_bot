@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Null
 abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Null
     var id: Long? = null
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
