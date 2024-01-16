@@ -73,16 +73,16 @@ class QrServiceImpl(
         val id = QRId(qrId)
         val paymentInfo = sbpClient.getPaymentInfo(id)
         return PaymentInformation(
-            paymentInfo.additionalInfo,
+            paymentInfo.additionalInfo?:"",
             paymentInfo.amount,
             paymentInfo.createDate,
-            paymentInfo.additionalInfo,
+            paymentInfo.currency,
             paymentInfo.merchantId,
             paymentInfo.order,
             paymentInfo.paymentStatus,
             paymentInfo.qrId,
             sbpClientDto.merchantId,
-            paymentInfo.transactionDate,
+            paymentInfo.transactionDate?:paymentInfo.createDate,
             paymentInfo.transactionId
         )
     }

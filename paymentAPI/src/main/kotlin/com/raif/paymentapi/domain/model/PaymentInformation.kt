@@ -4,7 +4,7 @@ import java.math.BigDecimal
 import java.time.ZonedDateTime
 
 data class PaymentInformation(
-    var additionalInfo: String?,
+    var additionalInfo: String,
     val amount: BigDecimal,
     val createDate: ZonedDateTime,
     val currency: String,
