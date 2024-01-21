@@ -13,7 +13,9 @@ services:
       - '9091:9091'
     environment:
       - SERVER_PORT= 9091
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/first_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/first_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=1488
   db:
     image: postgres:15.1-alpine
     container_name: database_postgres
