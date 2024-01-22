@@ -21,9 +21,6 @@
 	<modules>
 		<module>paymentAPI</module>
 	</modules>
-	<dependencies>
-
-	</dependencies>
 
 
 </project>

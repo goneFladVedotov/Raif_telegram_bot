@@ -1,10 +1,11 @@
-package com.raif.paymentapi.controlleradvice.impl
+package com.raif.paymentapi.web.controlleradvice.impl
 
-import com.raif.paymentapi.controlleradvice.SbpClientControllerAdvice
+import com.raif.paymentapi.web.controlleradvice.SbpClientControllerAdvice
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import raiffeisen.sbp.sdk.exception.ContractViolationException
 import raiffeisen.sbp.sdk.exception.SbpException
@@ -22,8 +23,19 @@ class SbpClientControllerAdviceImpl: SbpClientControllerAdvice {
         return ResponseEntity.badRequest().body(e.message)
     }
 
-    @ExceptionHandler(ContractViolationException::class)
+/*    @ExceptionHandler(ContractViolationException::class)
     override fun handleContractViolation(e: ContractViolationException): ResponseEntity<*> {
-        return ResponseEntity.badRequest().body(e.message)
+        return ResponseEntity.badRequest().body(e.message + " lox")
+    }*/
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    override fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException): ResponseEntity<*> {
+       return ResponseEntity.badRequest().body(e.message)
+    }
+
+    @ExceptionHandler(Exception::class)
+    override fun handle(e: Exception): ResponseEntity<*> {
+        e.printStackTrace()
+        return ResponseEntity.internalServerError().body(e.message)
     }
 }
