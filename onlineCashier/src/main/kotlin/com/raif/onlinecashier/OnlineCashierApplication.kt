@@ -22,19 +22,22 @@ fun main(args: Array<String>) {
 }
 
 //Standard Spring component annotation
-@Service
-class MyBot : TelegramLongPollingBot() {
-
-}
+//@Service
+//class MyBot : TelegramLongPollingBot() {
+//
+//}
 @RestController
 class MessageController() {
-
+	@GetMapping("/")
+	fun index() : String {
+		return "abn";
+	}
 }
-@Configuration
-class BotConfig {
-	@Bean
-	fun telegramBotsApi(bot: MyBot): TelegramBotsApi =
-		TelegramBotsApi(DefaultBotSession::class.java).apply {
-			registerBot(bot)
-		}
-}
+//@Configuration
+//class BotConfig {
+//	@Bean
+//	fun telegramBotsApi(bot: MyBot): TelegramBotsApi =
+//		TelegramBotsApi(DefaultBotSession::class.java).apply {
+//			registerBot(bot)
+//		}
+//}
