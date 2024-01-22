@@ -10,6 +10,7 @@ import com.raif.paymentapi.domain.model.QrInformation
 import com.raif.paymentapi.domain.model.QrKey
 import com.raif.paymentapi.service.DatabaseApiClient
 import com.raif.paymentapi.service.QrService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import raiffeisen.sbp.sdk.client.SbpClient
 import raiffeisen.sbp.sdk.model.`in`.QRUrl
@@ -22,12 +23,16 @@ import java.time.ZonedDateTime
 
 @Service
 class QrServiceImpl(
-    private val qrKeyRepository: QrKeyRepository
+    private val qrKeyRepository: QrKeyRepository,
+    @Value("\${raif.sbpMerchantId}")
+    private val sbpMerchantId: String,
+    @Value("\${raif.secretKey}")
+    private val secretKey: String
 ) : QrService {
     private val databaseApiClient: DatabaseApiClient = DatabaseApiClientImpl()
 
     override fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl {
-        val sbpClient = SbpClient(SbpClient.TEST_URL, qrDynamicDto.sbpMerchantId, qrDynamicDto.secretKey)
+        val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val qrCode = QRDynamic(qrDynamicDto.order, qrDynamicDto.amount)
         qrCode.account = qrDynamicDto.account
         qrCode.additionalInfo = qrDynamicDto.additionalInfo
@@ -35,7 +40,7 @@ class QrServiceImpl(
         qrCode.qrExpirationDate = qrDynamicDto.qrExpirationDate
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
-        qrKeyRepository.save(QrKey(qrUrl.qrId, qrDynamicDto.secretKey, qrDynamicDto.sbpMerchantId))
+        qrKeyRepository.save(QrKey(qrUrl.qrId))
         databaseApiClient.save(
             PaymentInformation(
                 qrDynamicDto.additionalInfo?:"",
@@ -45,7 +50,7 @@ class QrServiceImpl(
                 qrDynamicDto.order,
                 qrDynamicDto.paymentDetails?:"",
                 qrUrl.qrId,
-                qrDynamicDto.sbpMerchantId,
+                sbpMerchantId,
                 ZonedDateTime.now(),
                 0
             )
@@ -54,7 +59,7 @@ class QrServiceImpl(
     }
 
     override fun registerStaticQr(qrStaticDto: QrStaticDto): QRUrl {
-        val sbpClient = SbpClient(SbpClient.TEST_URL, qrStaticDto.sbpMerchantId, qrStaticDto.secretKey)
+        val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val qrCode = QRStatic(qrStaticDto.order)
         qrCode.account = qrStaticDto.account
         qrCode.additionalInfo = qrStaticDto.additionalInfo
@@ -63,17 +68,17 @@ class QrServiceImpl(
         qrCode.qrExpirationDate = qrCode.qrExpirationDate
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
-        qrKeyRepository.save(QrKey(qrUrl.qrId, qrStaticDto.secretKey, qrStaticDto.sbpMerchantId))
+        qrKeyRepository.save(QrKey(qrUrl.qrId))
         return qrUrl
     }
 
     override fun registerVariableQr(qrVariableDto: QrVariableDto): QRUrl {
-        val sbpClient = SbpClient(SbpClient.TEST_URL, qrVariableDto.sbpMerchantId, qrVariableDto.secretKey)
+        val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val qrCode = QRVariable()
         qrCode.account = qrVariableDto.account
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
-        qrKeyRepository.save(QrKey(qrUrl.qrId, qrVariableDto.secretKey, qrVariableDto.sbpMerchantId))
+        qrKeyRepository.save(QrKey(qrUrl.qrId))
         return qrUrl
     }
 

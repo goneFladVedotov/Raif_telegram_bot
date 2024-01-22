@@ -7,10 +7,10 @@ import java.math.BigDecimal
 
 @Validated
 data class RefundDto(
-    @field:NotNull(message = "merchantId must be not null")
+    /*@field:NotNull(message = "merchantId must be not null")
     val merchantId: String,
     @field:NotNull(message = "secret key must be not null")
-    val secretKey: String,
+    val secretKey: String,*/
     @field:NotNull(message = "orderId must be not null")
     val orderId: String,
     @field:NotNull(message = "refundId must be not null")

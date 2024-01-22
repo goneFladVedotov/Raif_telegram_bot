@@ -5,10 +5,10 @@ import org.hibernate.validator.constraints.Length
 import org.hibernate.validator.constraints.URL
 
 data class QrVariableDto(
-    @field:NotNull(message = "sbpMerchantId is required parameter")
+    /*@field:NotNull(message = "sbpMerchantId is required parameter")
     val sbpMerchantId: String,
     @field:NotNull(message = "secretKey is required parameter")
-    val secretKey: String,
+    val secretKey: String,*/
     @field:Length(max = 20, message = "account length must be less or equal 20")
     val account: String?,
     @field:URL(protocol = "https", message = "Invalid URL")

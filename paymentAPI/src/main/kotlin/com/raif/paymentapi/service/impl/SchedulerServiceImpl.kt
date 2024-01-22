@@ -7,17 +7,24 @@ import com.raif.paymentapi.service.DatabaseApiClient
 import com.raif.paymentapi.service.QrService
 import com.raif.paymentapi.service.RefundService
 import com.raif.paymentapi.service.SchedulerService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import javax.crypto.SecretKey
 
 @Service
 class SchedulerServiceImpl(
     private val qrKeyRepository: QrKeyRepository,
     private val qrService: QrService,
     private val refundService: RefundService,
-    val refundKeyRepository: RefundKeyRepository
+    val refundKeyRepository: RefundKeyRepository,
+    @Value("\${raif.sbpMerchantId}")
+    private val sbpMerchantId: String,
+    @Value("\${raif.secretKey}")
+    private val secretKey: String
 ) : SchedulerService {
+
     private val databaseApiClient: DatabaseApiClient = DatabaseApiClientImpl()
 
     @Scheduled(fixedDelay = 5000)
@@ -27,7 +34,7 @@ class SchedulerServiceImpl(
         if (qrKeys.isEmpty())
             return
         for (key in qrKeys) {
-            val sbpClientDto = SbpClientDto(key.merchantId, key.secretKey)
+            val sbpClientDto = SbpClientDto(sbpMerchantId, secretKey)
             val qrInfo = qrService.getQrInfo(key.qrId, sbpClientDto)
             if (qrInfo.qrStatus != "NEW" && qrInfo.qrStatus != "IN_PROGRESS") {
                 qrKeyRepository.deleteByQrId(qrInfo.qrId)
@@ -46,7 +53,7 @@ class SchedulerServiceImpl(
             return
         }
         for (key in refundKeys) {
-            val sbpClientDto = SbpClientDto(key.merchantId, key.secretKey)
+            val sbpClientDto = SbpClientDto(sbpMerchantId, secretKey)
             val refundStatus = refundService.getRefundStatus(key.refundId, sbpClientDto)
             if (refundStatus.refundStatus != "IN_PROGRESS") {
                 refundKeyRepository.deleteByRefundId(key.refundId)

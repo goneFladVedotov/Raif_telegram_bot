@@ -7,10 +7,10 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.math.BigDecimal
 
 data class QrStaticDto(
-    @field:NotNull(message = "sbpMerchantId is required parameter")
+    /*@field:NotNull(message = "sbpMerchantId is required parameter")
     val sbpMerchantId: String,
     @field:NotNull(message = "secretKey is required parameter")
-    val secretKey: String,
+    val secretKey: String,*/
     @field:Length(max = 20, message = "account length must be less or equal 20")
     val account: String?,
     @field:Length(max = 140, message = "additionalInfo length must be less or equal 140")

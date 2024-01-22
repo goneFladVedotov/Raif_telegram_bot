@@ -7,6 +7,7 @@ import com.raif.paymentapi.domain.model.RefundInformation
 import com.raif.paymentapi.domain.model.RefundKey
 import com.raif.paymentapi.service.DatabaseApiClient
 import com.raif.paymentapi.service.RefundService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import raiffeisen.sbp.sdk.client.SbpClient
 import raiffeisen.sbp.sdk.model.`in`.RefundStatus
@@ -18,10 +19,14 @@ import java.util.UUID
 @Service
 class RefundServiceImpl(
     private val refundKeyRepository: RefundKeyRepository,
-    private val databaseApiClient: DatabaseApiClient
+    private val databaseApiClient: DatabaseApiClient,
+    @Value("\${raif.sbpMerchantId}")
+    private val sbpMerchantId: String,
+    @Value("\${raif.secretKey}")
+    private val secretKey: String
 ) : RefundService {
     override fun makeRefund(refundDto: RefundDto): RefundStatus {
-        val sbpClient = SbpClient(SbpClient.TEST_URL, refundDto.merchantId, refundDto.secretKey)
+        val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val refundInfo = RefundInfo(
             refundDto.amount,
             refundDto.orderId,
@@ -33,7 +38,7 @@ class RefundServiceImpl(
             throw IllegalStateException("huyna")
         }
         databaseApiClient.save(RefundInformation(refundDto.amount, refundDto.orderId, refundDto.refundId, refundDto.paymentDetails, UUID.randomUUID().timestamp()))
-        refundKeyRepository.save(RefundKey(refundDto.refundId, refundDto.secretKey, refundDto.merchantId))
+        refundKeyRepository.save(RefundKey(refundDto.refundId))
         return response
     }
 

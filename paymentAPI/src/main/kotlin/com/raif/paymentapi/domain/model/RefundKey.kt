@@ -9,8 +9,8 @@ import jakarta.persistence.Table
 class RefundKey(
     @Column(name = "refund_id")
     val refundId: String,
-    @Column(name = "secret_key")
+    /*@Column(name = "secret_key")
     val secretKey: String,
     @Column(name = "merchant_id")
-    val merchantId: String
+    val merchantId: String*/
 ) : BaseEntity()
