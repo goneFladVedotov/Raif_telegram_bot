@@ -12,6 +12,6 @@ interface QrService {
     fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl
     fun registerStaticQr(qrStaticDto: QrStaticDto): QRUrl
     fun registerVariableQr(qrVariableDto: QrVariableDto): QRUrl
-    fun getQrInfo(qrId: String, sbpClientDto: SbpClientDto): QrInformation
-    fun getPaymentInfo(qrId: String, sbpClientDto: SbpClientDto): PaymentInformation
+    fun getQrInfo(qrId: String): QrInformation
+    fun getPaymentInfo(qrId: String): PaymentInformation
 }
