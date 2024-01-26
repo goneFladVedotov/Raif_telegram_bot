@@ -15,7 +15,7 @@ class DatabaseApiClientImpl : DatabaseApiClient {
     private val restTemplate: RestTemplate = RestTemplate()
     override fun save(qrInformation: QrInformation) {
         val response = restTemplate.postForEntity(
-            "http://localhost:9091/database-api/v1/qrs", qrInformation, Any::class.java
+            "http://147.78.66.234:9091/database-api/v1/qrs", qrInformation, Any::class.java
         )
         if (response.statusCode != HttpStatusCode.valueOf(200)) {
             throw DatabaseRequestException("bad status code: ${response.statusCode.value()}")
@@ -24,7 +24,7 @@ class DatabaseApiClientImpl : DatabaseApiClient {
 
     override fun save(refundInformation: RefundInformation) {
         val response = restTemplate.postForEntity(
-            "http://localhost:9091/database-api/v1/refund",
+            "http://147.78.66.234:9091/database-api/v1/refund",
             refundInformation,
             Any::class.java
         )
@@ -35,7 +35,7 @@ class DatabaseApiClientImpl : DatabaseApiClient {
 
     override fun save(paymentInformation: PaymentInformation) {
         val response = restTemplate.postForEntity(
-            "http://localhost:9091/database-api/v1/payments",
+            "http://147.78.66.234:9091/database-api/v1/payments",
             paymentInformation,
             Any::class.java
         )

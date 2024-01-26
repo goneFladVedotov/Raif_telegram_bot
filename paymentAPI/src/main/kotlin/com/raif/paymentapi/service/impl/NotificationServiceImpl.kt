@@ -31,12 +31,12 @@ class NotificationServiceImpl(
             throw IllegalAccessException("access denied")
         }
         databaseApiClient.update(
-            "http://database_app:9091/database-api/v1/payments/",
+            "http://147.78.66.234:9091/database-api/v1/payments/",
             paymentNotification.qrId,
             paymentNotification.paymentStatus
         )
         val qrStatus = qrService.getQrInfo(paymentNotification.qrId).qrStatus
-        databaseApiClient.update("http://database_app:9091/database-api/v1/qrs/",
+        databaseApiClient.update("http://147.78.66.234:9091/database-api/v1/qrs/",
             paymentNotification.qrId,
             qrStatus)
     }
