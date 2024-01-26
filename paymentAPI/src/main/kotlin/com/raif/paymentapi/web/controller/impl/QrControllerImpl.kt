@@ -34,7 +34,7 @@ class QrControllerImpl(
 
     @GetMapping("/{id}")
     override fun getQr(@PathVariable("id") qrId: String, @Validated @RequestBody sbpClientDto: SbpClientDto): ResponseEntity<*> {
-        return ResponseEntity.ok(qrService.getQrInfo(qrId, sbpClientDto))
+        return ResponseEntity.ok(qrService.getQrInfo(qrId))
     }
 
     @PostMapping("/refund")

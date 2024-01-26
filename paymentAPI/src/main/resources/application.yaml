@@ -10,9 +10,3 @@ notification:
     value: "https://pay-test.raif.ru/api/settings/v1/callback"
   url:
     value: "http://localhost:8081/payment-api/v1/notification"
-
-spring:
-  task:
-    scheduling:
-      pool:
-        size: 2
