@@ -68,16 +68,34 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
             val chatId = msg.chatId.toString()
             if (currentCommandRefund(msg)) {
                 if (!msg.isReply) {
-                    sendMessageExecute(chatId, "Пожалуйста, отпраьте команду /refund в ответ на qr код который нужно вернуть")
+                    sendMessageExecute(
+                        chatId,
+                        "Пожалуйста, отпраьте команду /refund *в ответ* на сообщение бота с qr кодом, оплату по которому нужно вернуть",
+                        true
+                    )
                     return
                 }
                 val repl = msg.replyToMessage
-                if (repl.from.userName == botName) {
-                    sendMessageExecute(chatId, "Нужное")
-                } else {
-                    sendMessageExecute(chatId, "Не нужное")
-                }
 
+                if (repl.from.userName != botName) {
+                    sendMessageExecute(
+                        chatId,
+                        "Пожалуйста, отпраьте команду /refund в ответ *на сообщение бота* с qr кодом, оплату по которому нужно вернуть",
+                        true
+                    )
+                    return
+                }
+                if (!repl.hasPhoto() || repl.caption.slice(IntRange(0, 3)) != "qrId") {
+                    sendMessageExecute(
+                        chatId,
+                        "Пожалуйста, отпраьте команду /refund в ответ на *сообщение* бота *с qr кодом*, оплату по которому нужно вернуть",
+                        true
+                    )
+                    return
+                }
+                val qrId = repl.caption.split("\n")[0].split(" ")[1]
+                val refundRes = refund(qrId, chatId)
+                sendMessageExecute(chatId, refundRes, true)
 
             } else if (currentCommandCreate(msg)) {
                 val price: Double = msg.text.toDoubleOrNull() ?: 0.0
@@ -98,8 +116,11 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         }
     }
 
-    fun sendMessageExecute(chatId: String, text: String) {
+    fun sendMessageExecute(chatId: String, text: String, markdown: Boolean = false) {
         val send = SendMessage(chatId, text)
+        if (markdown) {
+            send.parseMode = "MarkdownV2"
+        }
         execute(send)
     }
 
