@@ -76,7 +76,6 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                     sendMessageExecute(chatId, "Нужное")
                 } else {
                     sendMessageExecute(chatId, "Не нужное")
-
                 }
 
 
