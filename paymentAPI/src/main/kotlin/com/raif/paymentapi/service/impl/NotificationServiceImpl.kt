@@ -6,6 +6,7 @@ import com.raif.paymentapi.service.QrService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import raiffeisen.sbp.sdk.model.PaymentNotification
 import raiffeisen.sbp.sdk.util.SbpUtil
 
 @Service
@@ -25,11 +26,11 @@ class NotificationServiceImpl(
     }
 
     override fun handleCallback(notificationString: String) {
-        val paymentNotification = SbpUtil.parseNotification(notificationString)
-        val apiSignature = "..."
+        val paymentNotification: PaymentNotification = SbpUtil.parseNotification(notificationString)
+        /*val apiSignature = "..."
         if (!SbpUtil.checkNotificationSignature(paymentNotification, apiSignature, secretKey)) {
             throw IllegalAccessException("access denied")
-        }
+        }*/
         databaseApiClient.update(
             "http://147.78.66.234:9091/database-api/v1/payments/",
             paymentNotification.qrId,

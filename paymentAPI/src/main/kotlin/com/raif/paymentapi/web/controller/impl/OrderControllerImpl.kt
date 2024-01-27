@@ -5,19 +5,17 @@ import com.raif.paymentapi.domain.dto.RefundDto
 import com.raif.paymentapi.service.OrderService
 import com.raif.paymentapi.web.controller.OrderController
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.*
 
 @RestController
+@Validated
 @RequestMapping("payment-api/v1/orders")
 class OrderControllerImpl(
     private val orderService: OrderService
 ) : OrderController {
     @PostMapping
-    override fun makeOrder(@RequestBody orderDto: OrderDto): ResponseEntity<*> {
+    override fun makeOrder(@Validated @RequestBody orderDto: OrderDto): ResponseEntity<*> {
         orderService.makeOrder(orderDto)
         return ResponseEntity.ok("OK")
     }
@@ -29,7 +27,7 @@ class OrderControllerImpl(
     }
 
     @PostMapping("/refund")
-    override fun refundOrder(@RequestBody refundDto: RefundDto): ResponseEntity<*> {
+    override fun refundOrder(@Validated @RequestBody refundDto: RefundDto): ResponseEntity<*> {
         orderService.refundOrder(refundDto)
         return ResponseEntity.ok("OK")
     }

@@ -7,6 +7,7 @@ import com.raif.paymentapi.web.controller.QrController
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import raiffeisen.sbp.sdk.model.`in`.QRUrl
 import raiffeisen.sbp.sdk.model.`in`.RefundStatus
 import raiffeisen.sbp.sdk.model.out.RefundInfo
 
@@ -18,17 +19,17 @@ class QrControllerImpl(
     private val refundService: RefundService
 ) : QrController {
     @PostMapping("/dynamic")
-    override fun registerDynamicQr(@Validated @RequestBody qrDynamicDto: QrDynamicDto): ResponseEntity<*> {
+    override fun registerDynamicQr(@Validated @RequestBody qrDynamicDto: QrDynamicDto): ResponseEntity<QRUrl> {
         return ResponseEntity.ok(qrService.registerDynamicQr(qrDynamicDto))
     }
 
     @PostMapping("/static")
-    override fun registerStaticQr(@Validated @RequestBody qrStaticDto: QrStaticDto): ResponseEntity<*> {
+    override fun registerStaticQr(@Validated @RequestBody qrStaticDto: QrStaticDto): ResponseEntity<QRUrl> {
         return ResponseEntity.ok(qrService.registerStaticQr(qrStaticDto))
     }
 
     @PostMapping("/variable")
-    override fun registerVariableQr(@Validated @RequestBody qrVariableDto: QrVariableDto): ResponseEntity<*> {
+    override fun registerVariableQr(@Validated @RequestBody qrVariableDto: QrVariableDto): ResponseEntity<QRUrl> {
         return ResponseEntity.ok(qrService.registerVariableQr(qrVariableDto))
     }
 

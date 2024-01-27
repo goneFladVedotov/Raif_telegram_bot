@@ -21,8 +21,6 @@ https://pay.raif.ru/doc/sbp.html#tag/qr-creation
 5) API взаимодействует с databaseAPI:
 - загружает созданные QR
 - обновляет информацию о QR каждые 5 секунд
-6) API хранит в БД информацию (QrKey) о qrId, merchantId и secretKey каждого созданного QR. По завершению работы QR его QrKey удаляется из БД
-7) Добавлена поддержка Liquibase и Preliquibase
 
 
 

@@ -23,10 +23,10 @@ class SbpClientControllerAdviceImpl: SbpClientControllerAdvice {
         return ResponseEntity.badRequest().body(e.message)
     }
 
-/*    @ExceptionHandler(ContractViolationException::class)
+    @ExceptionHandler(ContractViolationException::class)
     override fun handleContractViolation(e: ContractViolationException): ResponseEntity<*> {
-        return ResponseEntity.badRequest().body(e.message + " lox")
-    }*/
+        return ResponseEntity.badRequest().body(e.message)
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     override fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException): ResponseEntity<*> {

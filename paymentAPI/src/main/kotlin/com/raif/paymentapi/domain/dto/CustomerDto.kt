@@ -1,7 +1,6 @@
 package com.raif.paymentapi.domain.dto
 
 import jakarta.validation.constraints.NotNull
-import org.hibernate.sql.Alias
 import org.springframework.validation.annotation.Validated
 
 @Validated
