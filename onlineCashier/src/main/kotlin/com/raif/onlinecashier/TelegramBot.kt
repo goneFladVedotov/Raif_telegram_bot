@@ -11,12 +11,31 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import java.io.FileInputStream
 
 
-var bot_token= ""
-
+var bot_token = ""
 
 
 fun Double.format(digits: Int) = "%.${digits}f".format(this)
 
+
+fun currentCommandCreate(msg: Message): Boolean {
+    val price: Double? = msg.text.toDoubleOrNull()
+    return price != null
+}
+
+fun parseCommand(msg: Message): MutableList<String> {
+    if (msg.text.isEmpty()) {
+        return mutableListOf("")
+    }
+    val normalized = msg.text.replace("\n", " ").trim()
+    val args = normalized.split(" ").toMutableList()
+    args[0] = args[0].lowercase()
+    return args
+}
+
+fun currentCommandRefund(msg: Message): Boolean {
+    val command = parseCommand(msg)
+    return (command[0] == "/refund" || command[0] == "/возврат") && (command.count() == 1)
+}
 
 
 @Service
@@ -24,6 +43,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
 
     @Value("\${telegram.botName}")
     private val botName = ""
+
     @Value("\${telegram.botToken}")
     private var token = ""
 
@@ -36,6 +56,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         println("TOKEN: $token")
         return token
     }
+
     override fun getBotUsername(): String {
         println("GetName")
         return botName
@@ -45,9 +66,21 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         if (update.hasMessage()) {
             val msg = update.message
             val chatId = msg.chatId.toString()
-            if (false) {
+            if (currentCommandRefund(msg)) {
+                if (!msg.isReply) {
+                    sendMessageExecute(chatId, "Пожалуйста, отпраьте команду /refund в ответ на qr код который нужно вернуть")
+                    return
+                }
+                val repl = msg.replyToMessage
+                if (repl.from.userName == botName) {
+                    sendMessageExecute(chatId, "Нужное")
+                } else {
+                    sendMessageExecute(chatId, "Не нужное")
 
-            } else {
+                }
+
+
+            } else if (currentCommandCreate(msg)) {
                 val price: Double = msg.text.toDoubleOrNull() ?: 0.0
                 if (price < 10) {
                     sendMessageExecute(chatId, "Минимальная сумма чека: 10 рублей")
@@ -56,7 +89,11 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                 val qr = generateQr(price, chatId)
                 val replay_msg = "qrId: ${qr.id}\nPrice: ${price.format(2)}"
                 sendPhotoExecute(chatId, qr.qrUrl, replay_msg)
-
+            } else {
+                sendMessageExecute(
+                    chatId,
+                    "Не понимаю, что вы имеете в виду. Пожалуйста, воспользуйтесь командой /help"
+                )
             }
 
         }
@@ -66,15 +103,18 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         val send = SendMessage(chatId, text)
         execute(send)
     }
-    fun sendPhotoExecute(chatId: String, url:String, text: String) {
+
+    fun sendPhotoExecute(chatId: String, url: String, text: String) {
         val send = SendPhoto(chatId, InputFile(url))
         send.caption = text
         execute(send)
     }
+
     fun testfunc() {
         val send = SendMessage("472209097", "abn")
         execute(send)
     }
+
     fun notEnough() {
 
     }
