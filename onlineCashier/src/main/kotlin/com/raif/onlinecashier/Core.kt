@@ -1,6 +1,6 @@
 package com.raif.onlinecashier
 
-fun generateQr(price: Double, marketId: String, ): QrObject {
+fun generateQr(price: Double, marketId: String): QrObject {
     //TODO:
     //  записывать в базу (qrid, qrurl, qrstatus, marketid, price)
     //  создавать поток который следит за оплатой заказа
@@ -11,7 +11,7 @@ fun generateQr(price: Double, marketId: String, ): QrObject {
     )
 }
 
-fun refund (qrId: String, marketId: String, ) : String {
+fun refund(qrId: String, marketId: String): String {
     //TODO:
     //  check if user own this qr
     //  check if qr has been paid

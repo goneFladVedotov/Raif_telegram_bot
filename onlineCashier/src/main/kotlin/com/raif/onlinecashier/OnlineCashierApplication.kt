@@ -12,14 +12,14 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 class OnlineCashierApplication
 
 fun main(args: Array<String>) {
-	runApplication<OnlineCashierApplication>(*args)
+    runApplication<OnlineCashierApplication>(*args)
 }
 
 @Configuration
 class BotConfig {
-	@Bean
-	fun telegramBotsApi(bot: MyBot): TelegramBotsApi =
-		TelegramBotsApi(DefaultBotSession::class.java).apply {
-			registerBot(bot)
-		}
+    @Bean
+    fun telegramBotsApi(bot: MyBot): TelegramBotsApi =
+        TelegramBotsApi(DefaultBotSession::class.java).apply {
+            registerBot(bot)
+        }
 }
