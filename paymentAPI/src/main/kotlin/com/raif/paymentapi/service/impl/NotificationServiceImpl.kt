@@ -15,8 +15,6 @@ class NotificationServiceImpl(
     private val callbackUrl: String,
     @Value("\${notification.url.value}")
     private val url: String,
-    @Value("\${raif.secretKey}")
-    private val secretKey: String,
     private val databaseApiClient: DatabaseApiClient,
     private val qrService: QrService
 ) : NotificationService {
@@ -27,10 +25,6 @@ class NotificationServiceImpl(
 
     override fun handleCallback(notificationString: String) {
         val paymentNotification: PaymentNotification = SbpUtil.parseNotification(notificationString)
-        /*val apiSignature = "..."
-        if (!SbpUtil.checkNotificationSignature(paymentNotification, apiSignature, secretKey)) {
-            throw IllegalAccessException("access denied")
-        }*/
         databaseApiClient.update(
             "http://147.78.66.234:9091/database-api/v1/payments/",
             paymentNotification.qrId,

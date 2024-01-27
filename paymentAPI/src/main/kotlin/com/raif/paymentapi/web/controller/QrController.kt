@@ -3,8 +3,6 @@ package com.raif.paymentapi.web.controller
 import com.raif.paymentapi.domain.dto.*
 import org.springframework.http.ResponseEntity
 import raiffeisen.sbp.sdk.model.`in`.QRUrl
-import raiffeisen.sbp.sdk.model.`in`.RefundStatus
-import raiffeisen.sbp.sdk.model.out.RefundInfo
 
 interface QrController {
     fun registerDynamicQr(qrDynamicDto: QrDynamicDto): ResponseEntity<QRUrl>

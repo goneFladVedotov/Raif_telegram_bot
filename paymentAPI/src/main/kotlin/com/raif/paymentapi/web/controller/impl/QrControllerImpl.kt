@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import raiffeisen.sbp.sdk.model.`in`.QRUrl
-import raiffeisen.sbp.sdk.model.`in`.RefundStatus
-import raiffeisen.sbp.sdk.model.out.RefundInfo
 
 @RestController
 @RequestMapping("payment-api/v1/qrs")
