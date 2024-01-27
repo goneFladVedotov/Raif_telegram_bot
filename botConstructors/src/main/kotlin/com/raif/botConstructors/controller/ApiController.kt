@@ -1,28 +1,27 @@
 package com.raif.botConstructors.controller
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import org.springframework.boot.autoconfigure.web.ServerProperties
+import com.raif.botConstructors.models.QR
+import com.raif.botConstructors.services.OrderService
 import org.springframework.core.io.UrlResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.postForEntity
 
 @RestController
-@RequestMapping("/api/v1")
-class ApiController(private val restTemplate: RestTemplate) {
-    @GetMapping("/get")
-    fun getResult(
+@RequestMapping("/")
+class ApiController(private val orderService: OrderService) {
+
+    val idList = mutableListOf<Int>()
+
+    @GetMapping("/api/v1/get/botobot/") //Показывает страницу с qr-кодом
+    fun getBotobot(
         @RequestParam id: String,
         @RequestParam amount: Double,
         @RequestParam currency: String
     ): ResponseEntity<UrlResource> {
-        val url = "http://host.docker.internal:8081/api/v1/qrs/dynamic"
-        val request = mapOf("amount" to amount, "order" to "botconstructors$id")
-        val response: ResponseEntity<QR> = restTemplate.postForEntity(url, request, QR::class.java)
-        val qrUrl: String = response.body?.qrUrl?: "";
+        val qr = orderService.createOrder(id, "botobot", amount).qr;
+        val qrUrl: String = qr.qrUrl
         val resource = UrlResource(qrUrl)
         val headers = HttpHeaders()
         headers.contentType = MediaType.IMAGE_JPEG
@@ -31,17 +30,27 @@ class ApiController(private val restTemplate: RestTemplate) {
         return ResponseEntity.ok()
             .headers(headers)
             .body(resource)
-
     }
 
-    data class QR(
-        @JsonProperty("qrId")
-        val qrId: String?,
-        @JsonProperty("qrStatus")
-        val qrStatus: String?,
-        @JsonProperty("payload")
-        val payload: String?,
-        @JsonProperty("qrUrl")
-        val qrUrl: String?
-    )
+    @GetMapping("/api/v1/get/smartbotpro/")
+    fun getSmartBotPro(
+        @RequestParam id: String,
+        @RequestParam amount: Double
+    ): ResponseEntity<QR> {
+        val qr = orderService.createOrder(id, "smartbotpro", amount).qr;
+        return ResponseEntity.ok(qr)
+    }
+
+    @GetMapping("/api/v1/status/smartbotpro/")
+    fun statusSmartBotPro(
+        @RequestParam id: String
+    ): String {
+        return orderService.getStatus("smartbotpro$id")
+    }
+
+    @GetMapping("/65b50d8fc78560b0ff505d62.html") //Нужно для валидации smartbotpro
+    @ResponseBody
+    fun tokenSmartBotPro(): String {
+        return "<html><body><p id=\"token\">65b50d8fc78560b0ff505d62</p></body></html>"
+    }
 }
