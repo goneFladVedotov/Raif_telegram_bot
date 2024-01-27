@@ -54,11 +54,3 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
     }
 
 }
-@Configuration
-class BotConfig {
-	@Bean
-	fun telegramBotsApi(bot: MyBot): TelegramBotsApi =
-		TelegramBotsApi(DefaultBotSession::class.java).apply {
-			registerBot(bot)
-		}
-}
