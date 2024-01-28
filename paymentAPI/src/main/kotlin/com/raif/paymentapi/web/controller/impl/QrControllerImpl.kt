@@ -32,7 +32,7 @@ class QrControllerImpl(
     }
 
     @GetMapping("/{id}")
-    override fun getQr(@PathVariable("id") qrId: String, @Validated @RequestBody sbpClientDto: SbpClientDto): ResponseEntity<*> {
+    override fun getQr(@PathVariable("id") qrId: String): ResponseEntity<QRUrl> {
         return ResponseEntity.ok(qrService.getQrInfo(qrId))
     }
 

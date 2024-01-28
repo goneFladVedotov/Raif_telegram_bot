@@ -3,7 +3,6 @@ package com.raif.paymentapi.service.impl
 import com.raif.paymentapi.domain.dto.QrDynamicDto
 import com.raif.paymentapi.domain.dto.QrStaticDto
 import com.raif.paymentapi.domain.dto.QrVariableDto
-import com.raif.paymentapi.domain.dto.SbpClientDto
 import com.raif.paymentapi.domain.model.PaymentInformation
 import com.raif.paymentapi.domain.model.QrInformation
 import com.raif.paymentapi.service.DatabaseApiClient
@@ -11,6 +10,7 @@ import com.raif.paymentapi.service.QrService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import raiffeisen.sbp.sdk.client.SbpClient
+import raiffeisen.sbp.sdk.model.`in`.PaymentInfo
 import raiffeisen.sbp.sdk.model.`in`.QRUrl
 import raiffeisen.sbp.sdk.model.out.QRDynamic
 import raiffeisen.sbp.sdk.model.out.QRId
@@ -75,28 +75,15 @@ class QrServiceImpl(
         return qrUrl
     }
 
-    override fun getQrInfo(qrId: String): QrInformation {
+    override fun getQrInfo(qrId: String): QRUrl {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val id = QRId(qrId)
-        val qrInfo = sbpClient.getQRInfo(id)
-        return QrInformation(qrInfo.qrId, qrInfo.qrStatus, qrInfo.payload, qrInfo.qrUrl)
+        return sbpClient.getQRInfo(id)
     }
 
-    override fun getPaymentInfo(qrId: String): PaymentInformation {
+    override fun getPaymentInfo(qrId: String): PaymentInfo {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val id = QRId(qrId)
-        val paymentInfo = sbpClient.getPaymentInfo(id)
-        return PaymentInformation(
-            paymentInfo.additionalInfo?:"",
-            paymentInfo.amount,
-            paymentInfo.createDate,
-            paymentInfo.currency,
-            paymentInfo.order,
-            paymentInfo.paymentStatus,
-            paymentInfo.qrId,
-            sbpMerchantId,
-            paymentInfo.transactionDate?:paymentInfo.createDate,
-            paymentInfo.transactionId
-        )
+        return sbpClient.getPaymentInfo(id)
     }
 }
