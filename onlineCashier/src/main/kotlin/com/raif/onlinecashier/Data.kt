@@ -1,7 +1,7 @@
 package com.raif.onlinecashier
 
 data class QrObject(
-    val id: String,
+    val qrId: String,
     val qrUrl: String,
     val qrStatus: String,
 )
