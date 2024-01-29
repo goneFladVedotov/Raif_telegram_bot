@@ -104,8 +104,13 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                     return
                 }
                 val qr = generateQr(price, chatId)
-                val replay_msg = "qrId: ${qr.id}\nPrice: ${price.format(2)}"
-                sendPhotoExecute(chatId, qr.qrUrl, replay_msg)
+                if (qr == null) {
+                    sendMessageExecute(chatId, "Ошибка при создании qr")
+                } else {
+                    val replay_msg = "qrId: ${qr.id}\nPrice: ${price.format(2)}"
+                    sendPhotoExecute(chatId, qr.qrUrl, replay_msg)
+                }
+
             } else {
                 sendMessageExecute(
                     chatId,
