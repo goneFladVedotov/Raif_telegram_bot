@@ -53,37 +53,39 @@ fun getQrById(qrId: String): QrObject? {
 }
 
 
-fun checkPayment(marketId: String, qrId: String, replyTo: Int) {
-    val mybot = MyBot()
-    while (true) {
-        val qr = getQrById(qrId)
-        if (qr == null) {
-            mybot.sendMessageExecute(marketId, "Ошибка при обновлении статуса qr", replyTo = replyTo)
+class CheckPayment(private var marketId: String, private var qrId: String, private var replyTo: Int) : Runnable {
+    public override fun run() {
+        val mybot = MyBot()
+        while (true) {
+            val qr = getQrById(qrId)
+            if (qr == null) {
+                mybot.sendMessageExecute(marketId, "Ошибка при обновлении статуса qr", replyTo = replyTo)
+                break
+            }
+            println(qr.qrStatus)
+
+            val qrStatus = qr.qrStatus
+            when (qrStatus) {
+                "PAID" -> {
+                    mybot.sendMessageExecute(marketId, "Qr успешно оплачен", replyTo = replyTo)
+                }
+
+                "EXPIRED" -> {
+                    mybot.sendMessageExecute(marketId, "Qr истек", replyTo = replyTo)
+                }
+
+                "NEW", "IN_PROGRESS" -> {
+//                mybot.sendMessageExecute(marketId, "Qr еще не оплачен", replyTo = replyTo)
+                    Thread.sleep(5000)
+                    continue
+                }
+
+                "CANCELED", "INACTIVE" -> {
+                    mybot.sendMessageExecute(marketId, "Qr отменен", replyTo = replyTo)
+                }
+            }
             break
         }
-        println(qr.qrStatus)
-
-        val qrStatus = qr.qrStatus
-        when (qrStatus) {
-            "PAID" -> {
-                mybot.sendMessageExecute(marketId, "Qr успешно оплачен", replyTo = replyTo)
-            }
-
-            "EXPIRED" -> {
-                mybot.sendMessageExecute(marketId, "Qr истек", replyTo = replyTo)
-            }
-
-            "NEW", "IN_PROGRESS" -> {
-//                mybot.sendMessageExecute(marketId, "Qr еще не оплачен", replyTo = replyTo)
-                Thread.sleep(5000)
-                continue
-            }
-
-            "CANCELED", "INACTIVE" -> {
-                mybot.sendMessageExecute(marketId, "Qr отменен", replyTo = replyTo)
-            }
-        }
-        break
     }
 }
 

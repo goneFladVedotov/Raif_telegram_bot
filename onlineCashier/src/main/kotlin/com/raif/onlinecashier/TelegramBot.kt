@@ -107,7 +107,8 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                 } else {
                     val replayMsg = "qrId: ${qr.qrId}\nPrice: ${price.format(2)}"
                     val replyTo = sendPhotoExecute(chatId, qr.qrUrl, replayMsg)
-                    checkPayment(chatId, qr.qrId, replyTo)
+                    val threadWithRunnable = Thread(CheckPayment(chatId, qr.qrId, replyTo))
+                    threadWithRunnable.start()
                 }
             } else {
                 sendMessageExecute(
