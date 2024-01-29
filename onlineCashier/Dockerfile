@@ -1,11 +1,6 @@
-FROM amazoncorretto:19.0.2
-WORKDIR /app
-COPY build.gradle.kts /app/build.gradle.kts
-COPY settings.gradle.kts /app/settings.gradle.kts
-COPY gradle /app/gradle
-COPY gradlew /app/gradlew
-COPY gradlew.bat /app/gradlew.bat
-COPY src /app/src
-EXPOSE 8089
-RUN ./gradlew
-ENTRYPOINT ["./gradlew", "bootRun"]
+FROM eclipse-temurin:17-jdk-alpine
+VOLUME /tmp
+ARG TOKEN
+ENV ONLINECASHIER_TOKEN $TOKEN
+COPY build/libs/onlineCashier-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
