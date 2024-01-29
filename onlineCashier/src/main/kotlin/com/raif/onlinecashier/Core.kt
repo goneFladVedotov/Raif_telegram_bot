@@ -14,7 +14,6 @@ fun generateQr(price: Double, marketId: String): QrObject? {
     )
     try {
         val resp = response.jsonObject
-        println(resp["qrId"])
         //TODO:
         //  записывать в базу (qrid, qrurl, qrstatus, marketid, price)
         //  создавать поток который следит за оплатой заказа
@@ -26,7 +25,6 @@ fun generateQr(price: Double, marketId: String): QrObject? {
     } catch (e: JSONException) {
         return null
     }
-
 }
 
 fun refund(qrId: String, marketId: String): String {
