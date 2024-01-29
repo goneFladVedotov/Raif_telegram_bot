@@ -53,12 +53,10 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         } else {
             token = bot_token
         }
-        println("TOKEN: $token")
         return token
     }
 
     override fun getBotUsername(): String {
-        println("GetName")
         return botName
     }
 
@@ -71,7 +69,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                     sendMessageExecute(
                         chatId,
                         "Пожалуйста, отпраьте команду /refund *в ответ* на сообщение бота с qr кодом, оплату по которому нужно вернуть",
-                        true
+                        markdown = "MarkdownV2"
                     )
                     return
                 }
@@ -81,7 +79,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                     sendMessageExecute(
                         chatId,
                         "Пожалуйста, отпраьте команду /refund в ответ *на сообщение бота* с qr кодом, оплату по которому нужно вернуть",
-                        true
+                        markdown = "MarkdownV2"
                     )
                     return
                 }
@@ -89,13 +87,13 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                     sendMessageExecute(
                         chatId,
                         "Пожалуйста, отпраьте команду /refund в ответ на *сообщение* бота *с qr кодом*, оплату по которому нужно вернуть",
-                        true
+                        markdown = "MarkdownV2"
                     )
                     return
                 }
                 val qrId = repl.caption.split("\n")[0].split(" ")[1]
                 val refundRes = refund(qrId, chatId)
-                sendMessageExecute(chatId, refundRes, true)
+                sendMessageExecute(chatId, refundRes, markdown = "MarkdownV2")
 
             } else if (currentCommandCreate(msg)) {
                 val price: Double = msg.text.toDoubleOrNull() ?: 0.0
@@ -107,10 +105,10 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                 if (qr == null) {
                     sendMessageExecute(chatId, "Ошибка при создании qr")
                 } else {
-                    val replay_msg = "qrId: ${qr.id}\nPrice: ${price.format(2)}"
-                    sendPhotoExecute(chatId, qr.qrUrl, replay_msg)
+                    val replayMsg = "qrId: ${qr.qrId}\nPrice: ${price.format(2)}"
+                    val replyTo = sendPhotoExecute(chatId, qr.qrUrl, replayMsg)
+                    checkPayment(chatId, qr.qrId, replyTo)
                 }
-
             } else {
                 sendMessageExecute(
                     chatId,
@@ -121,18 +119,23 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         }
     }
 
-    fun sendMessageExecute(chatId: String, text: String, markdown: Boolean = false) {
+    fun sendMessageExecute(chatId: String, text: String, markdown: String? = null, replyTo: Int? = null): Int {
         val send = SendMessage(chatId, text)
-        if (markdown) {
-            send.parseMode = "MarkdownV2"
+        if (markdown != null) {
+            send.parseMode = markdown
         }
-        execute(send)
+        if (replyTo != null) {
+            send.replyToMessageId = replyTo
+        }
+        val e = execute(send)
+        return e.messageId
     }
 
-    fun sendPhotoExecute(chatId: String, url: String, text: String) {
+    fun sendPhotoExecute(chatId: String, url: String, text: String): Int {
         val send = SendPhoto(chatId, InputFile(url))
         send.caption = text
-        execute(send)
+        val e = execute(send)
+        return e.messageId
     }
 
     fun testfunc() {
@@ -144,4 +147,3 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
 
     }
 }
-
