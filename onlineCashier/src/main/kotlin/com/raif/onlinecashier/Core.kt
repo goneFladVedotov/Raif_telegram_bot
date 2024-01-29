@@ -5,7 +5,7 @@ import org.json.JSONObject
 import java.util.UUID
 
 
-fun QrFromJson(json: JSONObject): QrObject {
+fun qrFromJson(json: JSONObject): QrObject {
     return QrObject(
         json["qrId"].toString(),
         json["qrUrl"].toString(),
@@ -32,7 +32,7 @@ fun generateQr(price: Double, marketId: String): QrObject? {
         //  записывать в базу (qrid, qrurl, qrstatus, marketid, price)
         //  создавать поток который следит за оплатой заказа
 
-        return QrFromJson(resp)
+        return qrFromJson(resp)
     } catch (e: JSONException) {
         return null
     }
@@ -45,7 +45,7 @@ fun getQrById(qrId: String): QrObject? {
     )
     println("Response received")
     return try {
-        QrFromJson(response.jsonObject)
+        qrFromJson(response.jsonObject)
     } catch (_: Exception) {
         null
     }
@@ -54,7 +54,7 @@ fun getQrById(qrId: String): QrObject? {
 
 
 class CheckPayment(private var marketId: String, private var qrId: String, private var replyTo: Int) : Runnable {
-    public override fun run() {
+    override fun run() {
         val mybot = MyBot()
         while (true) {
             val qr = getQrById(qrId)

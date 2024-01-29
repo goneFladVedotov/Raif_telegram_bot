@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.Message
-import java.io.FileInputStream
 
 
 var bot_token = ""
@@ -137,14 +136,5 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         send.caption = text
         val e = execute(send)
         return e.messageId
-    }
-
-    fun testfunc() {
-        val send = SendMessage("472209097", "abn")
-        execute(send)
-    }
-
-    fun notEnough() {
-
     }
 }

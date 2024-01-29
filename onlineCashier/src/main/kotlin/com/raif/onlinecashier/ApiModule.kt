@@ -9,7 +9,7 @@ class MessageController {
     @GetMapping("/")
     fun index(): String {
         val myBot = MyBot()
-        myBot.testfunc()
+        myBot.sendMessageExecute("472209097", "abn")
         return "abn"
     }
 }
