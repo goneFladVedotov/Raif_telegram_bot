@@ -36,6 +36,11 @@ fun currentCommandRefund(msg: Message): Boolean {
     return (command[0] == "/refund" || command[0] == "/возврат") && (command.count() == 1)
 }
 
+fun currentCommandHelp(msg: Message): Boolean {
+    val command = parseCommand(msg)
+    return (command[0] == "/help" || command[0] == "/помощь") && (command.count() == 1)
+}
+
 
 @Service
 class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
@@ -60,62 +65,69 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
     }
 
     override fun onUpdateReceived(update: Update) {
-        if (update.hasMessage()) {
-            val msg = update.message
-            val chatId = msg.chatId.toString()
-            if (currentCommandRefund(msg)) {
-                if (!msg.isReply) {
-                    sendMessageExecute(
-                        chatId,
-                        "Пожалуйста, отпраьте команду /refund *в ответ* на сообщение бота с qr кодом, оплату по которому нужно вернуть",
-                        markdown = "MarkdownV2"
-                    )
-                    return
-                }
-                val repl = msg.replyToMessage
+        if (!update.hasMessage()) return
 
-                if (repl.from.userName != botName) {
-                    sendMessageExecute(
-                        chatId,
-                        "Пожалуйста, отпраьте команду /refund в ответ *на сообщение бота* с qr кодом, оплату по которому нужно вернуть",
-                        markdown = "MarkdownV2"
-                    )
-                    return
-                }
-                if (!repl.hasPhoto() || repl.caption.slice(IntRange(0, 3)) != "qrId") {
-                    sendMessageExecute(
-                        chatId,
-                        "Пожалуйста, отпраьте команду /refund в ответ на *сообщение* бота *с qr кодом*, оплату по которому нужно вернуть",
-                        markdown = "MarkdownV2"
-                    )
-                    return
-                }
-                val qrId = repl.caption.split("\n")[0].split(" ")[1]
-                val refundRes = refund(qrId, chatId)
-                sendMessageExecute(chatId, refundRes, markdown = "MarkdownV2")
+        val msg = update.message
+        val chatId = msg.chatId.toString()
 
-            } else if (currentCommandCreate(msg)) {
-                val price: Double = msg.text.toDoubleOrNull() ?: 0.0
-                if (price < 10) {
-                    sendMessageExecute(chatId, "Минимальная сумма чека: 10 рублей")
-                    return
-                }
-                val qr = generateQr(price, chatId)
-                if (qr == null) {
-                    sendMessageExecute(chatId, "Ошибка при создании qr")
-                } else {
-                    val replayMsg = "qrId: ${qr.qrId}\nPrice: ${price.format(2)}"
-                    val replyTo = sendPhotoExecute(chatId, qr.qrUrl, replayMsg)
-                    val threadWithRunnable = Thread(CheckPayment(chatId, qr.qrId, replyTo))
-                    threadWithRunnable.start()
-                }
-            } else {
+        if (currentCommandHelp(msg)) {
+            sendMessageExecute(
+                chatId,
+                "Отправьте цену в формате \"123.4\" без лишних символов чтобы создать qr на эту сумму ",
+                markdown = "MarkdownV2"
+            )
+            return
+        } else if (currentCommandRefund(msg)) {
+            if (!msg.isReply) {
                 sendMessageExecute(
                     chatId,
-                    "Не понимаю, что вы имеете в виду. Пожалуйста, воспользуйтесь командой /help"
+                    "Пожалуйста, отпраьте команду /refund *в ответ* на сообщение бота с qr кодом, оплату по которому нужно вернуть",
+                    markdown = "MarkdownV2"
                 )
+                return
             }
+            val repl = msg.replyToMessage
 
+            if (repl.from.userName != botName) {
+                sendMessageExecute(
+                    chatId,
+                    "Пожалуйста, отпраьте команду /refund в ответ *на сообщение бота* с qr кодом, оплату по которому нужно вернуть",
+                    markdown = "MarkdownV2"
+                )
+                return
+            }
+            if (!repl.hasPhoto() || repl.caption.slice(IntRange(0, 3)) != "qrId") {
+                sendMessageExecute(
+                    chatId,
+                    "Пожалуйста, отпраьте команду /refund в ответ на *сообщение* бота *с qr кодом*, оплату по которому нужно вернуть",
+                    markdown = "MarkdownV2"
+                )
+                return
+            }
+            val qrId = repl.caption.split("\n")[0].split(" ")[1]
+            val refundRes = refund(qrId, chatId)
+            sendMessageExecute(chatId, refundRes, markdown = "MarkdownV2")
+
+        } else if (currentCommandCreate(msg)) {
+            val price: Double = msg.text.toDoubleOrNull() ?: 0.0
+            if (price < 10) {
+                sendMessageExecute(chatId, "Минимальная сумма чека: 10 рублей")
+                return
+            }
+            val qr = generateQr(price, chatId)
+            if (qr == null) {
+                sendMessageExecute(chatId, "Ошибка при создании qr")
+            } else {
+                val replayMsg = "qrId: ${qr.qrId}\nPrice: ${price.format(2)}"
+                val replyTo = sendPhotoExecute(chatId, qr.qrUrl, replayMsg)
+                val threadWithRunnable = Thread(CheckPayment(chatId, qr.qrId, replyTo))
+                threadWithRunnable.start()
+            }
+        } else {
+            sendMessageExecute(
+                chatId,
+                "Не понимаю, что вы имеете в виду. Пожалуйста, воспользуйтесь командой /help"
+            )
         }
     }
 
