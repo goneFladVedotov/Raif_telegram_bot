@@ -38,12 +38,12 @@ class QrServiceImpl(
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
         databaseApiClient.save(
             PaymentInformation(
-                qrDynamicDto.additionalInfo?:"",
+                qrDynamicDto.additionalInfo ?: "",
                 qrDynamicDto.amount,
                 ZonedDateTime.now(),
-                qrDynamicDto.currency?:"",
+                qrDynamicDto.currency ?: "",
                 qrDynamicDto.order,
-                qrDynamicDto.paymentDetails?:"",
+                qrDynamicDto.paymentDetails ?: "",
                 qrUrl.qrId,
                 sbpMerchantId,
                 ZonedDateTime.now(),

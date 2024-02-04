@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import raiffeisen.sbp.sdk.model.`in`.QRUrl
+import raiffeisen.sbp.sdk.model.`in`.RefundStatus
 
 @RestController
 @RequestMapping("payment-api/v1/qrs")
@@ -37,7 +38,7 @@ class QrControllerImpl(
     }
 
     @PostMapping("/refund")
-    override fun refundPayment(@RequestBody refundDto: RefundDto): ResponseEntity<*> {
+    override fun refundPayment(@RequestBody refundDto: RefundDto): ResponseEntity<RefundStatus> {
         return ResponseEntity.ok(refundService.makeRefund(refundDto))
     }
 }

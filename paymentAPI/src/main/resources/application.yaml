@@ -1,6 +1,12 @@
 server:
   port: 8081
 
+spring:
+  task:
+    scheduling:
+      pool:
+        size: 2
+
 raif:
   sbpMerchantId: "MA622976"
   secretKey: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNQTYyMjk3NiIsImp0aSI6ImM5MTBjNGU4LTRhZmMtNDBlMS04ZGU3LWVlODg2N2JiOGU3NCJ9.rnPFEsixy9Wr4GhxT9D9s8dlBg5dRKWMLPfxl48oHAo"

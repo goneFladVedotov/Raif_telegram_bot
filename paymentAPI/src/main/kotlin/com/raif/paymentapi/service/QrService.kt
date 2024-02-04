@@ -3,9 +3,6 @@ package com.raif.paymentapi.service
 import com.raif.paymentapi.domain.dto.QrDynamicDto
 import com.raif.paymentapi.domain.dto.QrStaticDto
 import com.raif.paymentapi.domain.dto.QrVariableDto
-import com.raif.paymentapi.domain.dto.SbpClientDto
-import com.raif.paymentapi.domain.model.PaymentInformation
-import com.raif.paymentapi.domain.model.QrInformation
 import raiffeisen.sbp.sdk.model.`in`.PaymentInfo
 import raiffeisen.sbp.sdk.model.`in`.QRUrl
 
