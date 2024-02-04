@@ -6,14 +6,7 @@ import com.raif.databaseapi.service.RefundService
 import com.raif.databaseapi.web.controller.RefundController
 import com.raif.databaseapi.web.dto.RefundInfoDto
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/database-api/v1/refund")
@@ -36,13 +29,13 @@ class RefundControllerImpl(
     }
 
     @GetMapping("/{refundId}")
-    override fun getRefundInfo(@PathVariable("refundId") refundId: String): ResponseEntity<*> {
+    override fun getRefundInfo(@PathVariable("refundId") refundId: String): ResponseEntity<RefundInfoDto> {
         val refundInfoDto = mapper.entityToDto(refundService.getRefundInfo(refundId))
         return ResponseEntity.ok(refundInfoDto)
     }
 
     @GetMapping
-    override fun getAll(): ResponseEntity<*> {
-        return ResponseEntity.ok(refundService.getAll())
+    override fun getAll(): ResponseEntity<List<RefundInfoDto>> {
+        return ResponseEntity.ok(mapper.entityToDto(refundService.getAll()))
     }
 }

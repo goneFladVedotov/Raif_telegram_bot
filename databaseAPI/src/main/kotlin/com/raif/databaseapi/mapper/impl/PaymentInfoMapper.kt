@@ -38,4 +38,12 @@ class PaymentInfoMapper: Mapper<PaymentInfo, PaymentInfoDto> {
         )
         return entity
     }
+
+    override fun entityToDto(entities: List<PaymentInfo>): List<PaymentInfoDto> {
+        return entities.map { entityToDto(it) }
+    }
+
+    override fun dtoToEntity(dtos: List<PaymentInfoDto>): List<PaymentInfo> {
+        return dtos.map { dtoToEntity(it) }
+    }
 }

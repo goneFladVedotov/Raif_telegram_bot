@@ -16,4 +16,12 @@ class QrInfoMapper: Mapper<QrInfo, QrInfoDto> {
         val entity = QrInfo(dto.qrId, dto.qrStatus, dto.payload, dto.qrUrl)
         return entity
     }
+
+    override fun entityToDto(entities: List<QrInfo>): List<QrInfoDto> {
+        return entities.map { entityToDto(it) }
+    }
+
+    override fun dtoToEntity(dtos: List<QrInfoDto>): List<QrInfo> {
+        return dtos.map { dtoToEntity(it) }
+    }
 }

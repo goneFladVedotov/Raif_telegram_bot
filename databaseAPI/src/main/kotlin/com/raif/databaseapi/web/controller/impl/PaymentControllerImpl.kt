@@ -5,7 +5,6 @@ import com.raif.databaseapi.mapper.Mapper
 import com.raif.databaseapi.service.PaymentService
 import com.raif.databaseapi.web.controller.PaymentController
 import com.raif.databaseapi.web.dto.PaymentInfoDto
-import com.raif.databaseapi.web.dto.RefundInfoDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -30,14 +29,14 @@ class PaymentControllerImpl(
     }
 
     @GetMapping("/{qrId}")
-    override fun getPaymentInfo(@PathVariable("qrId") qrId: String): ResponseEntity<*> {
+    override fun getPaymentInfo(@PathVariable("qrId") qrId: String): ResponseEntity<PaymentInfoDto> {
         val paymentInfoDto = mapper.entityToDto(paymentService.getPaymentInfo(qrId))
         return ResponseEntity.ok(paymentInfoDto)
     }
 
     @GetMapping
-    override fun getAll(): ResponseEntity<*> {
-        return ResponseEntity.ok(paymentService.getAll())
+    override fun getAll(): ResponseEntity<List<PaymentInfoDto>> {
+        return ResponseEntity.ok(mapper.entityToDto(paymentService.getAll()))
     }
 
 }

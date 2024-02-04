@@ -30,4 +30,12 @@ class RefundMapper: Mapper<RefundInfo, RefundInfoDto> {
         )
         return entity
     }
+
+    override fun entityToDto(entities: List<RefundInfo>): List<RefundInfoDto> {
+        return entities.map { entityToDto(it) }
+    }
+
+    override fun dtoToEntity(dtos: List<RefundInfoDto>): List<RefundInfo> {
+        return dtos.map { dtoToEntity(it) }
+    }
 }
