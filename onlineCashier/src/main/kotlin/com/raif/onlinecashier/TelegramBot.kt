@@ -73,7 +73,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         if (currentCommandHelp(msg)) {
             sendMessageExecute(
                 chatId,
-                "Отправьте цену в формате \"123.4\" без лишних символов чтобы создать qr на эту сумму ",
+                "Отправьте цену в формате \"123\\.4\" без лишних символов чтобы создать qr на эту сумму ",
                 markdown = "MarkdownV2"
             )
             return
