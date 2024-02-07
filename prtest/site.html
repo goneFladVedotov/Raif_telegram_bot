@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> QR Info</title>
+</head>
+<body>
+
+<h1>QR Info</h1>
+
+<style>
+#table{
+  border: 1px solid #eee;
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 20px;
+}
+#table th {
+  font-weight: bold;
+  padding: 5px;
+  background: #efefef;
+  border: 1px solid #dddddd;
+}
+#table td{
+  word-break: break-all;
+  padding: 5px 10px;
+  border: 1px solid #eee;
+  text-align: center;
+}
+#table tbody tr:nth-child(odd){
+  background: #fff;
+}
+#table tbody tr:nth-child(even){
+  background: #F7F7F7;
+}
+
+</style>
+
+<script>
+    async function fetchData() {
+        return fetch('http://147.78.66.234:9091/database-api/v1/qrs')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+
+</script>
+
+<script>
+async function displayData(data) {
+    console.log('Displaying data:', data); 
+    var dataContainer = document.getElementById('data-body');
+    dataContainer.innerHTML = ''
+    for(let i = 0; i<data.length; i++) {
+        const newTr = document.createElement("tr");
+        
+        const newTh = document.createElement("td");
+        newTh.textContent = data[i].qrId;
+        newTr.appendChild(newTh);
+        
+        const newTh1 = document.createElement("td");
+        newTh1.textContent = data[i].qrStatus;
+        newTr.appendChild(newTh1);
+
+        const newTh2 = document.createElement("td");
+        newTh2.textContent = data[i].payload;
+        newTr.appendChild(newTh2);
+
+        const newTh3 = document.createElement("td");
+        newTh3.textContent = data[i].qrUrl;
+        newTr.appendChild(newTh3);
+
+        const newTh4 = document.createElement("td");
+        newTh4.textContent = data[i].id;
+        newTr.appendChild(newTh4);
+
+        dataContainer.appendChild(newTr);
+    }
+}
+</script>
+
+<script>
+    async function displayFilterStatus(Status){
+        let data = await fetchData()
+        let newData = data.filter((item) => item.qrStatus == Status)
+        displayData(newData)
+   }
+</script>
+
+<script>
+    async function displayAll(){
+        let data = await fetchData()
+        displayData(data)
+    } 
+</script>
+
+<script>
+    window.onload = displayAll;
+</script>
+
+<button onclick="displayFilterStatus('PAID')"> Paid </button>
+<button onclick="displayFilterStatus('NEW')"> New </button>
+<button onclick="displayAll()"> All </button>
+
+<table id="table">
+    <thead>
+        <tr>
+            <th>QR ID</th>
+            <th>Status</th>
+            <th>Payload</th>
+            <th>URL</th>
+            <th>ID</th>
+        </tr>
+    </thead>
+    <tbody id="data-body"></tbody>
+</table>
+</body>
+</html>

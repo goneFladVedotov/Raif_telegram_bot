@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация и Регистрация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .auth-container {
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .auth-container h2 {
+            color: #333333;
+        }
+
+        .auth-form, .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            color: #666666;
+        }
+
+        .form-group input {
+            padding: 8px;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            padding: 10px;
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .register-link {
+            margin-top: 10px;
+            color: #3498db;
+            text-decoration: none;
+            display: block;
+        }
+
+        .register-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+  <div class="auth-container">
+    <h2 id="formTitle">Авторизация</h2>    
+        <div class="auth-form" id="authForm">
+            <form onsubmit="return login()">
+                <div class="form-group">
+                    <label for="username">Имя пользователя:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Войти</button>
+            </form>
+        </div>
+
+    <div class="register-form" id="registerForm">
+        <form onsubmit="return register()">
+            <div class="form-group">
+                <label for="newUsername">Новое имя пользователя:</label>
+                <input type="text" id="newUsername" name="newUsername" required>
+            </div>
+            <div class="form-group">
+                <label for="newPassword">Новый пароль:</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+            </div>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+
+    <a href="#" class="register-link" onclick="toggleForms()">Зарегистрироваться</a>
+</div>
+
+<script>
+    function login() {
+        // Замените alert на код, который будет выполняться после успешной авторизации
+        // Например, можно использовать window.location.href для перенаправления
+        alert('Вход выполнен успешно!'); // Можно убрать это уведомление
+        window.location.href = "site.html"; // Замените "site.html" на ваш URL
+        return false;
+    }
+
+    function register() {
+        // Замените alert на код, который будет выполняться после успешной авторизации
+        // Например, можно использовать window.location.href для перенаправления
+        alert('Регистрация -- выполнена успешно!'); // Можно убрать это уведомление
+        window.location.href = "site.html"; // Замените "site.html" на ваш URL
+        return false;
+    }
+
+    function toggleForms() {
+        var authForm = document.getElementById("authForm");
+        var registerForm = document.getElementById("registerForm");
+        var formTitle = document.getElementById("formTitle");
+        var registerLink = document.querySelector(".register-link");
+
+        if (authForm.style.display === "flex") {
+            authForm.style.display = "none";
+            registerForm.style.display = "flex";
+            formTitle.innerText = "Регистрация";
+            registerLink.innerText = "Войти";
+        } else {
+            authForm.style.display = "flex";
+            registerForm.style.display = "none";
+            formTitle.innerText = "Авторизация";
+            registerLink.innerText = "Зарегистрироваться";
+        }
+    }
+</script>
+
+</body>
+</html>
