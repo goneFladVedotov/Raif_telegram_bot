@@ -6,5 +6,6 @@ data class QrObject(
     val qrUrl: String,
     val payload: String,
     val qrStatus: String,
+    var orderId: String
 )
 

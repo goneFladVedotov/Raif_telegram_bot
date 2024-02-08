@@ -10,29 +10,34 @@ fun qrFromJson(json: JSONObject): QrObject {
         json["qrId"].toString(),
         json["qrUrl"].toString(),
         json["payload"].toString(),
-        json["qrStatus"].toString()
+        json["qrStatus"].toString(),
+        "",
     )
 }
 
 
 fun generateQr(price: Double, marketId: String): QrObject? {
     println("Send qr post request")
+    val uuid = UUID.randomUUID().toString().replace("-", "")
+    val orderId = "cashier.$uuid"
     val response = khttp.post(
         "http://147.78.66.234:8081/payment-api/v1/qrs/dynamic",
         json = mapOf(
             "amount" to price,
-            "order" to "cashier.${UUID.randomUUID().toString().replace("-", "")}",
-            "qrExpirationDate" to "+1m"
+            "order" to orderId,
+            "qrExpirationDate" to "+1M"
         )
     )
     println("Response received")
     try {
-        val resp = response.jsonObject
         //TODO:
         //  записывать в базу (qrid, qrurl, qrstatus, marketid, price)
         //  создавать поток который следит за оплатой заказа
+        val resp = response.jsonObject
+        val qr = qrFromJson(resp)
+        qr.orderId = orderId
 
-        return qrFromJson(resp)
+        return qr
     } catch (e: JSONException) {
         return null
     }
@@ -44,11 +49,18 @@ fun getQrById(qrId: String): QrObject? {
         "http://147.78.66.234:9091/database-api/v1/qrs/$qrId"
     )
     println("Response received")
-    return try {
+    val qr = try {
         qrFromJson(response.jsonObject)
-    } catch (_: Exception) {
-        null
+    } catch (_: JSONException) {
+        return null
     }
+    val qrn = loadQrByQrId(qr.qrId)
+    if (qrn == null) {
+        qr.orderId = "CANT FIND"
+    } else {
+        qr.orderId = qrn.orderId
+    }
+    return qr
 
 }
 
@@ -75,8 +87,8 @@ class CheckPayment(private var marketId: String, private var qrId: String, priva
                 }
 
                 "NEW", "IN_PROGRESS" -> {
-//                mybot.sendMessageExecute(marketId, "Qr еще не оплачен", replyTo = replyTo)
-                    Thread.sleep(5000)
+                    //mybot.sendMessageExecute(marketId, "Qr еще не оплачен", replyTo = replyTo)
+                    Thread.sleep(1000)
                     continue
                 }
 
