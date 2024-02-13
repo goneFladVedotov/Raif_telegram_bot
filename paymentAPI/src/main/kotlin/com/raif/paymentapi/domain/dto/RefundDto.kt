@@ -7,8 +7,6 @@ import java.math.BigDecimal
 
 @Validated
 data class RefundDto(
-    @field:NotNull(message = "qrId must be not null")
-    val qrId: String,
     @field:NotNull(message = "orderId must be not null")
     val orderId: String,
     @field:NotNull(message = "refundId must be not null")

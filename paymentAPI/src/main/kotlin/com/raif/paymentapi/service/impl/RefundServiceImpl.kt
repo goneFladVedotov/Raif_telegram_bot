@@ -9,10 +9,11 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import raiffeisen.sbp.sdk.client.SbpClient
 import raiffeisen.sbp.sdk.model.`in`.RefundStatus
-import raiffeisen.sbp.sdk.model.out.QRId
 import raiffeisen.sbp.sdk.model.out.RefundId
 import raiffeisen.sbp.sdk.model.out.RefundInfo
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.abs
 
 @Service
 class RefundServiceImpl(
@@ -26,9 +27,8 @@ class RefundServiceImpl(
     override fun makeRefund(refundDto: RefundDto): RefundStatus {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val refundInfo = RefundInfo(refundDto.amount, refundDto.orderId, refundDto.refundId)
+
         refundInfo.paymentDetails = refundDto.paymentDetails
-        val paymentInfo = sbpClient.getPaymentInfo(QRId(refundDto.qrId))
-        refundInfo.transactionId = paymentInfo.transactionId
         val response = sbpClient.refundPayment(refundInfo)
         databaseApiClient.save(
             RefundInformation(
@@ -37,7 +37,7 @@ class RefundServiceImpl(
                 refundDto.refundId,
                 response.refundStatus,
                 refundDto.paymentDetails,
-                paymentInfo.transactionId
+                abs(UUID.randomUUID().mostSignificantBits)
             )
         )
         refundIdList.add(refundDto.refundId)
@@ -58,7 +58,11 @@ class RefundServiceImpl(
         for (refundId in refundIdList) {
             val refundStatus = getRefundStatus(refundId)
             if (refundStatus.refundStatus != "IN_PROGRESS") {
-                databaseApiClient.update("http://147.78.66.234:9091/database-api/v1/refund/", refundId, refundStatus.refundStatus)
+                databaseApiClient.update(
+                    "http://147.78.66.234:9091/database-api/v1/refund/",
+                    refundId,
+                    refundStatus.refundStatus
+                )
             } else {
                 updatedList.add(refundId)
             }
