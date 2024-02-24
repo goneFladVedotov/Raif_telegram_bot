@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("payment-api/v1/callback")
+@RequestMapping("/payment-api/v1/callback")
 class CallbackControllerImpl(
     private val notificationService: NotificationService
 ): CallbackController {

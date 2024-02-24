@@ -4,8 +4,10 @@ import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.Length
 import org.hibernate.validator.constraints.URL
 import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.validation.annotation.Validated
 import java.math.BigDecimal
 
+@Validated
 data class QrStaticDto(
     /*@field:NotNull(message = "sbpMerchantId is required parameter")
     val sbpMerchantId: String,

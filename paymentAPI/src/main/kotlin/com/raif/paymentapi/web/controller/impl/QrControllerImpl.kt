@@ -11,7 +11,7 @@ import raiffeisen.sbp.sdk.model.`in`.QRUrl
 import raiffeisen.sbp.sdk.model.`in`.RefundStatus
 
 @RestController
-@RequestMapping("payment-api/v1/qrs")
+@RequestMapping("/payment-api/v1/qrs")
 @Validated
 class QrControllerImpl(
     private val qrService: QrService,

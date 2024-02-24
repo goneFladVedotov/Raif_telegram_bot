@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @Validated
-@RequestMapping("payment-api/v1/orders")
+@RequestMapping("/payment-api/v1/orders")
 class OrderControllerImpl(
     private val orderService: OrderService
 ) : OrderController {
