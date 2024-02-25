@@ -16,9 +16,13 @@ fun qrFromJson(json: JSONObject): QrObject {
 }
 
 
+fun generateUuid(): String {
+    return UUID.randomUUID().toString().replace("-", "")
+}
+
 fun generateQr(price: Double, marketId: String): QrObject? {
     println("Send qr post request")
-    val uuid = UUID.randomUUID().toString().replace("-", "")
+    val uuid = generateUuid()
     val orderId = "cashier.$uuid"
     val response = khttp.post(
         "http://147.78.66.234:8081/payment-api/v1/qrs/dynamic",
@@ -29,18 +33,17 @@ fun generateQr(price: Double, marketId: String): QrObject? {
         )
     )
     println("Response received")
-    try {
-        //TODO:
-        //  записывать в базу (qrid, qrurl, qrstatus, marketid, price)
-        //  создавать поток который следит за оплатой заказа
-        val resp = response.jsonObject
-        val qr = qrFromJson(resp)
-        qr.orderId = orderId
+    val resp = try {
+        response.jsonObject
 
-        return qr
     } catch (e: JSONException) {
         return null
     }
+    val qr = qrFromJson(resp)
+    qr.orderId = orderId
+    storeQr(qr)
+    return qr
+
 }
 
 fun getQrById(qrId: String): QrObject? {
@@ -102,10 +105,31 @@ class CheckPayment(private var marketId: String, private var qrId: String, priva
 }
 
 
-fun refund(qrId: String, marketId: String): String {
-    //TODO:
-    //  check if user own this qr
-    //  check if qr has been paid
-    //  check
-    return "Это плейсхолдер возврата заказа `$qrId`"
+fun refund(qrId: String, marketId: String, price: Double): String {
+    val qr = loadQrByQrId(qrId) ?: return "Не смог найти qr по id `$qrId`"
+    val response = refundRequest(
+        mapOf(
+            "orderId" to qr.orderId,
+            "refundId" to generateUuid(),
+            "amount" to price
+        )
+    ) ?: return "Ошибка при выполнении возврата"
+    return "Возврат: ${response["amount"]}\nСтатус: ${response["refundStatus"]}"
+}
+
+fun refundRequest(json: Map<String, Any>): JSONObject? {
+    return JSONObject(mutableMapOf(
+        "amount" to json.getOrDefault("amount", 0),
+        "refundStatus" to "PLACEHOLDER OK"
+    ))
+
+    val response = khttp.post(
+        "http://147.78.66.234:8081/payment-api/v1/qrs/refund",
+        json = json
+    )
+    return try {
+        response.jsonObject
+    } catch (_: JSONException) {
+        null
+    }
 }

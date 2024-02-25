@@ -31,9 +31,18 @@ fun parseCommand(msg: Message): MutableList<String> {
     return args
 }
 
-fun currentCommandRefund(msg: Message): Boolean {
+fun currentCommandRefund(msg: Message, params: MutableList<Any>): Boolean {
+    params.clear();
     val command = parseCommand(msg)
-    return (command[0] == "/refund" || command[0] == "/возврат") && (command.count() == 1)
+    if (
+        (command.count() == 2) &&
+        (command[0] == "/refund" || command[0] == "/возврат") &&
+        (command[1].toDoubleOrNull() != null)
+        ) {
+        params.add(command[1].toDoubleOrNull()!!)
+        return true
+    }
+    return false
 }
 
 fun currentCommandHelp(msg: Message): Boolean {
@@ -69,15 +78,17 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
 
         val msg = update.message
         val chatId = msg.chatId.toString()
+        val param = mutableListOf<Any>();
 
         if (currentCommandHelp(msg)) {
             sendMessageExecute(
                 chatId,
-                "Отправьте цену в формате \"123\\.4\" без лишних символов чтобы создать qr на эту сумму ",
+                "Отправьте цену в формате \"123.4\" без лишних символов чтобы создать qr на эту сумму ",
                 markdown = "MarkdownV2"
             )
             return
-        } else if (currentCommandRefund(msg)) {
+        } else if (currentCommandRefund(msg, param) ) {
+            val price = param[0] as Double
             if (!msg.isReply) {
                 sendMessageExecute(
                     chatId,
@@ -105,7 +116,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
                 return
             }
             val qrId = repl.caption.split("\n")[0].split(" ")[1]
-            val refundRes = refund(qrId, chatId)
+            val refundRes = refund(qrId, chatId, price)
             sendMessageExecute(chatId, refundRes, markdown = "MarkdownV2")
 
         } else if (currentCommandCreate(msg)) {
@@ -132,7 +143,14 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
     }
 
     fun sendMessageExecute(chatId: String, text: String, markdown: String? = null, replyTo: Int? = null): Int {
-        val send = SendMessage(chatId, text)
+        var new_text = "";
+        for (x in text) {
+            if (x == '\\' || x == '.' || x == '*' ) {
+                new_text += '\\'
+            }
+            new_text += x
+        }
+        val send = SendMessage(chatId, new_text)
         if (markdown != null) {
             send.parseMode = markdown
         }
