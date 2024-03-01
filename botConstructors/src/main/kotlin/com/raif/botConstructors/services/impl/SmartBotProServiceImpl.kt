@@ -20,7 +20,7 @@ class SmartBotProServiceImpl(
 
     private val logger = LoggerFactory.getLogger(javaClass)
     override fun orderPaid(order: Order) {
-        logger.info("order ${order.id} was paid")
+        logger.info("Smartbotpro order ${order.id} was paid")
         val usernameProperty = order.client.extraInfo::class.memberProperties.find { it.name == "username" }
         if (usernameProperty == null) {
             throw Exception("client does not have username")

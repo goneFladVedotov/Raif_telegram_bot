@@ -15,7 +15,7 @@ class OrderServiceImpl() : OrderService {
 
     override fun getOrder(orderId: String): Order {
         val order: Order = orderMap.getOrElse(orderId) {
-            throw Exception("not valid clientId")
+            throw Exception("not valid orderId")
         }
         return order
     }

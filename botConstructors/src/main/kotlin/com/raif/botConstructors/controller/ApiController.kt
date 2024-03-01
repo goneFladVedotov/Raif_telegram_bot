@@ -1,22 +1,20 @@
 package com.raif.botConstructors.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.raif.botConstructors.models.*
 import com.raif.botConstructors.models.dto.ClientSmartbotproDto
 import com.raif.botConstructors.models.dto.RefundDto
 import com.raif.botConstructors.models.dto.ShopbackDataSmartbotproDto
-import com.raif.botConstructors.services.ClientService
-import com.raif.botConstructors.services.OrderService
-import com.raif.botConstructors.services.QRCodeService
-import com.raif.botConstructors.services.SmartBotProService
+import com.raif.botConstructors.services.*
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.security.oauth2.server.servlet.OAuth2AuthorizationServerProperties.Token
+import org.springframework.core.io.UrlResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
-import kotlin.math.log
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.util.MultiValueMap
 
 @RestController
 @RequestMapping("/")
@@ -24,11 +22,14 @@ class ApiController(
     private val orderService: OrderService,
     private val qrCodeService: QRCodeService,
     private val clientService: ClientService,
-    private val smartBotProService: SmartBotProService
+    private val smartBotProService: SmartBotProService,
+    private val botobotService: BotobotService,
+    private val orderConvertorService: OrderConvertorService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     val objectMapper = ObjectMapper()
+
     @PostMapping("/bot-constructors/v1/client/create/smartbotpro/")
     fun createClientSmartBotPro(
         @RequestBody request: ClientSmartbotproDto
@@ -44,6 +45,36 @@ class ApiController(
     ): ResponseEntity<Client> {
         logger.info("/bot-constructors/v1/client/get/smartbotpro/")
         return ResponseEntity.ok(clientService.getClient(id))
+    }
+
+    @PostMapping("/bot-constructors/v1/order/create/botobot/", consumes = ["application/x-www-form-urlencoded"])
+    fun createOrderBotobot(@RequestParam params: MultiValueMap<String, String>) {
+        logger.info("/bot-constructors/v1/order/create/botobot/")
+        logger.info("Received POST request with parameters: $params")
+        val botobotOrderDto = orderConvertorService.toBotobotOrderDto(params)
+        val order: Order = orderConvertorService.convertBotobotOrderDtoToOrder(botobotOrderDto)
+        logger.info("order=$order")
+        orderService.createOrder(order)
+    }
+
+    @GetMapping("/bot-constructors/v1/order/qr/botobot/")
+    private fun getOrderQR(@RequestParam id: String): Any { //ResponseEntity<UrlResource> or String
+        logger.info("/bot-constructors/v1/order/qr/botobot/")
+        try {
+            val orderId = "botobot$id"
+            val order = orderService.getOrder(orderId)
+            val qr: QR = qrCodeService.getQR(order.qrId)
+            val resource = UrlResource(qr.qrUrl)
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.IMAGE_JPEG
+            headers.contentLength = resource.contentLength()
+            return ResponseEntity.ok()
+                .headers(headers)
+                .body(resource)
+        } catch (e: Exception) {
+            return ResponseEntity.ok("${e.message} Please reload page or try later")
+        }
+
     }
 
     @PostMapping("/bot-constructors/v1/order/create/smartbotpro/")
@@ -90,7 +121,7 @@ class ApiController(
         @PathVariable("type") type: String,
         @RequestParam id: String
     ): ResponseEntity<String> {
-        logger.info("/bot-constructors/v1/order/status/{type}/")
+        logger.info("/bot-constructors/v1/order/status/$type/")
         val orderId = type + id
         val order: Order = orderService.getOrder(orderId)
         val qr: QR = qrCodeService.getQR(order.qrId)
@@ -105,12 +136,15 @@ class ApiController(
         @RequestParam amount: BigDecimal,
         @RequestParam details: String
         ): ResponseEntity<String> {
+        logger.info("/bot-constructors/v1/order/refund/$type/")
         val orderId = type + id
         val order = orderService.getOrder(orderId)
         val refundDto = RefundDto(orderId, refundId, amount, details, null)
         qrCodeService.refund(refundDto)
         if (type == "smartbotpro") {
             smartBotProService.orderRefund(order, refundDto)
+        } else if (type == "botobot") {
+            botobotService.updateOrderStatus(id, "50") // 50 — оформлен возврат
         }
         return ResponseEntity.ok("SUCCESS")
     }

@@ -10,6 +10,7 @@ class UpdateScheduler(
     private val qrCodeService: QRCodeService,
     private val orderService: OrderService,
     private val smartBotProService: SmartBotProService,
+    private val botobotService: BotobotService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -25,6 +26,10 @@ class UpdateScheduler(
                 if (newStatus == "PAID" && order.type == "smartbotpro") {
                     smartBotProService.orderPaid(newOrder)
                 }
+                if (newStatus == "PAID" && order.type == "botobot") {
+                    botobotService.paidOrder(newOrder.id)
+                }
+
                 orderService.createOrder(newOrder)
             }
         }
