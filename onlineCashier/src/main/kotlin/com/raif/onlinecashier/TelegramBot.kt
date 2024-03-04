@@ -83,8 +83,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
         if (currentCommandHelp(msg)) {
             sendMessageExecute(
                 chatId,
-                "Отправьте цену в формате \"123.4\" без лишних символов чтобы создать qr на эту сумму ",
-                markdown = "MarkdownV2"
+                "Отправьте цену в формате \"123.4\" без лишних символов чтобы создать qr на эту сумму",
             )
             return
         } else if (currentCommandRefund(msg, param) ) {
@@ -92,7 +91,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
             if (!msg.isReply) {
                 sendMessageExecute(
                     chatId,
-                    "Пожалуйста, отпраьте команду /refund *в ответ* на сообщение бота с qr кодом, оплату по которому нужно вернуть",
+                    "Пожалуйста, отпраьте команду /refund **в ответ на сообщение** бота с qr кодом, оплату по которому нужно вернуть",
                     markdown = "MarkdownV2"
                 )
                 return
@@ -102,7 +101,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
             if (repl.from.userName != botName) {
                 sendMessageExecute(
                     chatId,
-                    "Пожалуйста, отпраьте команду /refund в ответ *на сообщение бота* с qr кодом, оплату по которому нужно вернуть",
+                    "Пожалуйста, отпраьте команду /refund в ответ **на сообщение бота** с qr кодом, оплату по которому нужно вернуть",
                     markdown = "MarkdownV2"
                 )
                 return
@@ -110,14 +109,14 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
             if (!repl.hasPhoto() || repl.caption.slice(IntRange(0, 3)) != "qrId") {
                 sendMessageExecute(
                     chatId,
-                    "Пожалуйста, отпраьте команду /refund в ответ на *сообщение* бота *с qr кодом*, оплату по которому нужно вернуть",
+                    "Пожалуйста, отпраьте команду /refund в ответ на **сообщение** бота **с qr кодом**, оплату по которому нужно вернуть",
                     markdown = "MarkdownV2"
                 )
                 return
             }
             val qrId = repl.caption.split("\n")[0].split(" ")[1]
-            val refundRes = refund(qrId, chatId, price)
-            sendMessageExecute(chatId, refundRes, markdown = "MarkdownV2")
+            val refundRes = refund(qrId, chatId, price, msg.messageId)
+            sendMessageExecute(chatId, refundRes, markdown = "MarkdownV2", replyTo = msg.messageId)
 
         } else if (currentCommandCreate(msg)) {
             val price: Double = msg.text.toDoubleOrNull() ?: 0.0
@@ -143,13 +142,7 @@ class MyBot : TelegramLongPollingBot() {//TODO move bot token to constructor
     }
 
     fun sendMessageExecute(chatId: String, text: String, markdown: String? = null, replyTo: Int? = null): Int {
-        var new_text = "";
-        for (x in text) {
-            if (x == '\\' || x == '.' || x == '*' ) {
-                new_text += '\\'
-            }
-            new_text += x
-        }
+        var new_text = text
         val send = SendMessage(chatId, new_text)
         if (markdown != null) {
             send.parseMode = markdown

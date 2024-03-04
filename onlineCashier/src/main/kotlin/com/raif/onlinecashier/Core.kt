@@ -105,31 +105,60 @@ class CheckPayment(private var marketId: String, private var qrId: String, priva
 }
 
 
-fun refund(qrId: String, marketId: String, price: Double): String {
+fun refund(qrId: String, marketId: String, price: Double, replyTo: Int): String {
     val qr = loadQrByQrId(qrId) ?: return "Не смог найти qr по id `$qrId`"
-    val response = refundRequest(
+    var json = JSONObject(
         mapOf(
             "orderId" to qr.orderId,
             "refundId" to generateUuid(),
-            "amount" to price
+            "amount" to price,
+            "paymentDetails" to ""
         )
-    ) ?: return "Ошибка при выполнении возврата"
-    return "Возврат: ${response["amount"]}\nСтатус: ${response["refundStatus"]}"
+    )
+    val response = refundRequest(json)
+    if (response["refundStatus"] == "IN_PROGRESS") {
+        println("Start refund loop")
+        val threadWithRunnable = Thread(CheckRefund(json, marketId, replyTo))
+        threadWithRunnable.start()
+    }
+    var status = response["refundStatus"].toString().replace("_", "\\_")
+    return "Возврат: ${response["amount"]}\nСтатус: $status"
 }
 
-fun refundRequest(json: Map<String, Any>): JSONObject? {
-    return JSONObject(mutableMapOf(
-        "amount" to json.getOrDefault("amount", 0),
-        "refundStatus" to "PLACEHOLDER OK"
-    ))
-
+fun refundRequest(json: JSONObject): JSONObject {
     val response = khttp.post(
         "http://147.78.66.234:8081/payment-api/v1/qrs/refund",
         json = json
     )
+    if (response.statusCode == 400) {
+        return JSONObject(mapOf("amount" to 0, "refundStatus" to "Qr еще не оплачен"))
+    }
     return try {
         response.jsonObject
     } catch (_: JSONException) {
-        null
+        return JSONObject(mapOf("amount" to 0, "refundStatus" to "Ошибка при выполнении возврата"))
+    }
+}
+
+
+class CheckRefund(private var json: JSONObject, private var chatId: String, private var replyTo: Int) : Runnable {
+    override fun run() {
+        val mybot = MyBot()
+        Thread.sleep(1000)
+        while (true) {
+            var response = refundRequest(json)
+            if (response["refundStatus"] == "IN_PROGRESS") {
+                Thread.sleep(1000)
+                continue
+            } else {
+                var status = response["refundStatus"].toString().replace("_", "\\_")
+                mybot.sendMessageExecute(
+                    chatId,
+                    "Возврат: ${response["amount"]}\nСтатус: $status",
+                    markdown = "MarkdownV2", replyTo = replyTo
+                )
+            }
+            break
+        }
     }
 }
