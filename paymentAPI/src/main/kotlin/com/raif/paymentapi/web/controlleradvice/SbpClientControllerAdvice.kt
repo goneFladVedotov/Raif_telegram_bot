@@ -11,5 +11,5 @@ interface SbpClientControllerAdvice {
     fun handleSbp(e: SbpException): ResponseEntity<*>
     fun handleContractViolation(e: ContractViolationException): ResponseEntity<*>
     fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException): ResponseEntity<*>
-    fun handle(e: Exception): ResponseEntity<*>
+    fun handleException(e: Exception): ResponseEntity<*>
 }

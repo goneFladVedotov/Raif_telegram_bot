@@ -8,6 +8,7 @@ import com.raif.paymentapi.domain.model.QrInformation
 import com.raif.paymentapi.service.DatabaseApiClient
 import com.raif.paymentapi.service.QrService
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import raiffeisen.sbp.sdk.client.SbpClient
 import raiffeisen.sbp.sdk.model.`in`.PaymentInfo
@@ -16,7 +17,12 @@ import raiffeisen.sbp.sdk.model.out.QRDynamic
 import raiffeisen.sbp.sdk.model.out.QRId
 import raiffeisen.sbp.sdk.model.out.QRStatic
 import raiffeisen.sbp.sdk.model.out.QRVariable
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
 
 @Service
 class QrServiceImpl(
@@ -25,6 +31,7 @@ class QrServiceImpl(
     @Value("\${raif.secretKey}")
     private val secretKey: String
 ) : QrService {
+    private val qrDynamicQueue: BlockingQueue<Pair<String, String>> = ArrayBlockingQueue<Pair<String, String>>(10)
     private val databaseApiClient: DatabaseApiClient = DatabaseApiClientImpl()
 
     override fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl {
@@ -50,6 +57,7 @@ class QrServiceImpl(
                 0
             )
         )
+        qrDynamicQueue.add(Pair(qrUrl.qrId!!, qrDynamicDto.qrExpirationDate!!))
         return qrUrl
     }
 
@@ -85,5 +93,23 @@ class QrServiceImpl(
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val id = QRId(qrId)
         return sbpClient.getPaymentInfo(id)
+    }
+
+    @Scheduled(fixedDelay = 10000)
+    override fun checkQrExpirationDate() {
+        val size = qrDynamicQueue.size
+        while (size > 0) {
+            val current = qrDynamicQueue.poll()
+            val expirationDateTime = LocalDateTime.parse(current.second, DateTimeFormatter.ofPattern("YYYY-MM-DD ТHH24:MM:SS±HH:MM / +nM / +nm"))
+            if (!expirationDateTime.isAfter(LocalDateTime.now())) {
+                databaseApiClient.update(
+                    "http://147.78.66.234:9091/database-api/v1/qrs/",
+                    current.first,
+                    "EXPIRED"
+                )
+            } else {
+                qrDynamicQueue.add(current)
+            }
+        }
     }
 }

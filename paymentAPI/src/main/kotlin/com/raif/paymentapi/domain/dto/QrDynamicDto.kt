@@ -1,5 +1,6 @@
 package com.raif.paymentapi.domain.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.Length
 import org.hibernate.validator.constraints.URL
@@ -26,13 +27,12 @@ data class QrDynamicDto(
     val order: String,
     @field:Length(max = 185, message = "paymentDetails length must be less or equal 185")
     val paymentDetails: String?,
-    @field:DateTimeFormat(pattern = "YYYY-MM-DD ТHH24:MM:SS±HH:MM / +nM / +nm")
+    @field:JsonFormat(pattern = "YYYY-MM-DD ТHH24:MM:SS±HH:MM / +nM / +nm")
     val qrExpirationDate: String?,
     val subscription: SubscriptionDto?,
     @field:URL(protocol = "https", message = "Invalid URL")
     val redirectUrl: String?,
     @field:Length(max = 32, message = "qrDescription length must be less or equal 32")
-    val qrDescription: String?
-    //TODO extra
-
+    val qrDescription: String?,
+    val extra: Map<String, String>?
 )

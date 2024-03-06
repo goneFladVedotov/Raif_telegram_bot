@@ -6,6 +6,8 @@ import raiffeisen.sbp.sdk.model.`in`.fiscal.ReceiptInfo
 interface ReceiptService {
     fun saveSellReceipt(receiptDto: ReceiptDto): ReceiptInfo
     fun registerSellReceipt(receiptNumber: String): ReceiptInfo
+    fun getSellReceipt(receiptNumber: String): ReceiptInfo
     fun saveRefundReceipt(receiptDto: ReceiptDto): ReceiptInfo
     fun registerRefundReceipt(receiptNumber: String): ReceiptInfo
+    fun getRefundReceipt(receiptNumber: String): ReceiptInfo
 }

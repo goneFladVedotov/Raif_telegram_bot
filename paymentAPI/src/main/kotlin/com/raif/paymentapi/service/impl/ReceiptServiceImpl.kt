@@ -29,6 +29,11 @@ class ReceiptServiceImpl(
         return sbpClient.registerReceipt(receiptNumber)
     }
 
+    override fun getSellReceipt(receiptNumber: String): ReceiptInfo {
+        val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)
+        return sbpClient.getReceiptInfo(receiptNumber)
+    }
+
     override fun saveRefundReceipt(receiptDto: ReceiptDto): ReceiptInfo {
         val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)
         return sbpClient.saveRefundReceipt(buildReceipt(receiptDto))
@@ -37,6 +42,11 @@ class ReceiptServiceImpl(
     override fun registerRefundReceipt(receiptNumber: String): ReceiptInfo {
         val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)
         return sbpClient.registerRefundReceipt(receiptNumber)
+    }
+
+    override fun getRefundReceipt(receiptNumber: String): ReceiptInfo {
+        val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)
+        return sbpClient.getRefundReceipt(receiptNumber)
     }
 
     private fun buildReceipt(receiptDto: ReceiptDto): Receipt {

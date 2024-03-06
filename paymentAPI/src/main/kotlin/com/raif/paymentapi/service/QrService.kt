@@ -12,4 +12,5 @@ interface QrService {
     fun registerVariableQr(qrVariableDto: QrVariableDto): QRUrl
     fun getQrInfo(qrId: String): QRUrl
     fun getPaymentInfo(qrId: String): PaymentInfo
+    fun checkQrExpirationDate()
 }

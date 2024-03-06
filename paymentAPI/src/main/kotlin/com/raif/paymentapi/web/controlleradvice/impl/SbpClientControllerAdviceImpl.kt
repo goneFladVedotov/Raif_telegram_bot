@@ -32,7 +32,7 @@ class SbpClientControllerAdviceImpl: SbpClientControllerAdvice {
     }
 
     @ExceptionHandler(Exception::class)
-    override fun handle(e: Exception): ResponseEntity<*> {
+    override fun handleException(e: Exception): ResponseEntity<*> {
         e.printStackTrace()
         return ResponseEntity.internalServerError().body(e.message)
     }

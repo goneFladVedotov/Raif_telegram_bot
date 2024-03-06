@@ -3,6 +3,7 @@ package com.raif.paymentapi.web.controller.impl
 import com.raif.paymentapi.domain.dto.ReceiptDto
 import com.raif.paymentapi.service.ReceiptService
 import com.raif.paymentapi.web.controller.ReceiptController
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -16,7 +17,7 @@ class ReceiptControllerImpl(
 ) : ReceiptController {
 
     @PostMapping("/sell")
-    override fun saveSellReceipt(@Validated @RequestBody receiptDto: ReceiptDto): ResponseEntity<ReceiptInfo> {
+    override fun saveSellReceipt(@Valid @RequestBody receiptDto: ReceiptDto): ResponseEntity<ReceiptInfo> {
         return ResponseEntity.ok(receiptService.saveSellReceipt(receiptDto))
     }
 
@@ -25,13 +26,23 @@ class ReceiptControllerImpl(
         return ResponseEntity.ok(receiptService.registerSellReceipt(receiptNumber))
     }
 
+    @GetMapping("/sell/{receiptNumber}")
+    override fun getSellReceipt(@PathVariable receiptNumber: String): ResponseEntity<ReceiptInfo> {
+        return ResponseEntity.ok(receiptService.getSellReceipt(receiptNumber))
+    }
+
     @PostMapping("/refund")
-    override fun saveRefundReceipt(@Validated @RequestBody receiptDto: ReceiptDto): ResponseEntity<ReceiptInfo> {
+    override fun saveRefundReceipt(@Valid @RequestBody receiptDto: ReceiptDto): ResponseEntity<ReceiptInfo> {
         return ResponseEntity.ok(receiptService.saveRefundReceipt(receiptDto))
     }
 
     @PutMapping("/refund/{receiptNumber}")
     override fun registerRefundReceipt(@PathVariable receiptNumber: String): ResponseEntity<ReceiptInfo> {
         return ResponseEntity.ok(receiptService.registerRefundReceipt(receiptNumber))
+    }
+
+    @GetMapping("/refund/{receiptNumber}")
+    override fun getRefundReceipt(@PathVariable receiptNumber: String): ResponseEntity<ReceiptInfo> {
+        return ResponseEntity.ok(receiptService.getRefundReceipt(receiptNumber))
     }
 }
