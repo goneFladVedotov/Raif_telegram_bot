@@ -13,7 +13,6 @@ class TelegramManager(
     @EventListener
     fun update(update: Update) {
         if (update.hasMessage()) {
-            dataService.test()
             val msg = update.message
             val chatId = msg.chatId
             val text = msg.text

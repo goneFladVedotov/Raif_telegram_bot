@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 
 @Entity
 @Table(name = "qrs")
-class QrObject (
+class QrObject(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String = "",
@@ -19,7 +19,10 @@ class QrObject (
     val qrUrl: String = "",
     @Column(nullable = true)
     val qrStatus: String = "",
-)
+) {
+    constructor(qrId: String, payload: String, qrUrl: String, qrStatus: String) :
+            this("", qrId, payload, qrUrl, qrStatus)
+}
 
 @Repository
 interface QrObjectRepository : JpaRepository<QrObject, String> {
