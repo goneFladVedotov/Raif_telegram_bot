@@ -1,6 +1,8 @@
 package com.raif.onlinecashier.models
 
 import jakarta.persistence.*
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 
 
 @Entity
@@ -18,3 +20,7 @@ class QrObject (
     @Column(nullable = true)
     val qrStatus: String = "",
 )
+
+@Repository
+interface QrObjectRepository : JpaRepository<QrObject, String> {
+}

@@ -1,6 +1,6 @@
 package com.raif.onlinecashier.services
 
-import com.raif.onlinecashier.models.repositories.QrObjectRepository
+import com.raif.onlinecashier.models.QrObjectRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
