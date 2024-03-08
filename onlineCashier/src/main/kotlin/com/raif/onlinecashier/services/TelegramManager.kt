@@ -3,6 +3,9 @@ package com.raif.onlinecashier.services
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
 
 @Service
 class TelegramManager(
@@ -27,10 +30,32 @@ class TelegramManager(
                 getMenu(chatId)
             } else if (text == "/listOrder") {
                 getOrder(chatId)
+            } else if (text == "/test") {
+                test(chatId)
             }
         }
     }
 
+
+    private fun test(chatId: Long) {
+        val keyboard = mutableListOf<KeyboardRow>()
+        val row1 = KeyboardRow()
+        val row2 = KeyboardRow()
+
+        row1.add(KeyboardButton("Button 1"))
+        row1.add(KeyboardButton("Button 2"))
+        row2.add(KeyboardButton("Button 3"))
+        row2.add(KeyboardButton("Button 4"))
+
+        keyboard.add(row1)
+        keyboard.add(row2)
+
+        val keyboardMarkup = ReplyKeyboardMarkup()
+        keyboardMarkup.keyboard = keyboard
+
+        telegramService.sendMessage(chatId, "aboba", replyMarkup = keyboardMarkup)
+
+    }
     private fun addToMenu(chatId: Long, name: String, price: Double) {
         telegramService.sendMessage(chatId, "add $name: $price")
         dataService.addMenuProduct(chatId, name, price)
