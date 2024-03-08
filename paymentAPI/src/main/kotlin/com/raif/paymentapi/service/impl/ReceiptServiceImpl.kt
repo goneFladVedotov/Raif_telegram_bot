@@ -21,17 +21,17 @@ class ReceiptServiceImpl(
 ) : ReceiptService {
     override fun saveSellReceipt(receiptDto: ReceiptDto): ReceiptInfo {
         val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)
-        return sbpClient.saveReceipt(buildReceipt(receiptDto))
+        return sbpClient.saveSellReceipt(buildReceipt(receiptDto))
     }
 
     override fun registerSellReceipt(receiptNumber: String): ReceiptInfo {
         val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)
-        return sbpClient.registerReceipt(receiptNumber)
+        return sbpClient.registerSellReceipt(receiptNumber)
     }
 
     override fun getSellReceipt(receiptNumber: String): ReceiptInfo {
         val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)
-        return sbpClient.getReceiptInfo(receiptNumber)
+        return sbpClient.getSellReceiptInfo(receiptNumber)
     }
 
     override fun saveRefundReceipt(receiptDto: ReceiptDto): ReceiptInfo {
@@ -46,14 +46,14 @@ class ReceiptServiceImpl(
 
     override fun getRefundReceipt(receiptNumber: String): ReceiptInfo {
         val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)
-        return sbpClient.getRefundReceipt(receiptNumber)
+        return sbpClient.getRefundReceiptInfo(receiptNumber)
     }
 
     private fun buildReceipt(receiptDto: ReceiptDto): Receipt {
         val receipt = Receipt()
-        receipt.receiptType = receiptDto.receiptType
+        receipt.receiptNumber = receiptDto.receiptNumber
         val receiptClient = ReceiptClient()
-        receiptClient.email = receiptDto.receiptClientDto.email
+        receiptClient.email = receiptDto.email
 
         val receiptItems: MutableList<ReceiptItem> = mutableListOf()
         for (dto in receiptDto.receiptItemDtos) {
@@ -65,7 +65,8 @@ class ReceiptServiceImpl(
             item.vatType = dto.vatType
             receiptItems.add(item)
         }
-        receipt.receiptItems = receiptItems.toTypedArray()
+        receipt.client = receiptClient
+        receipt.items = receiptItems.toTypedArray()
         receipt.total = receiptDto.total
         return receipt
     }

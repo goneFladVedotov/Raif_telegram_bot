@@ -17,8 +17,7 @@ import raiffeisen.sbp.sdk.model.out.QRDynamic
 import raiffeisen.sbp.sdk.model.out.QRId
 import raiffeisen.sbp.sdk.model.out.QRStatic
 import raiffeisen.sbp.sdk.model.out.QRVariable
-import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.ArrayBlockingQueue
@@ -31,7 +30,7 @@ class QrServiceImpl(
     @Value("\${raif.secretKey}")
     private val secretKey: String
 ) : QrService {
-    private val qrDynamicQueue: BlockingQueue<Pair<String, String>> = ArrayBlockingQueue<Pair<String, String>>(10)
+    private val qrQueue: BlockingQueue<Pair<String, String>> = ArrayBlockingQueue(10)
     private val databaseApiClient: DatabaseApiClient = DatabaseApiClientImpl()
 
     override fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl {
@@ -40,7 +39,7 @@ class QrServiceImpl(
         qrCode.account = qrDynamicDto.account
         qrCode.additionalInfo = qrDynamicDto.additionalInfo
         qrCode.paymentDetails = qrDynamicDto.paymentDetails
-        qrCode.qrExpirationDate = qrDynamicDto.qrExpirationDate
+        qrCode.qrExpirationDate = qrDynamicDto.qrExpirationDate;
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
         databaseApiClient.save(
@@ -57,7 +56,7 @@ class QrServiceImpl(
                 0
             )
         )
-        qrDynamicQueue.add(Pair(qrUrl.qrId!!, qrDynamicDto.qrExpirationDate!!))
+        qrQueue.add(Pair(qrUrl.qrId!!, qrDynamicDto.qrExpirationDate!!))
         return qrUrl
     }
 
@@ -71,6 +70,7 @@ class QrServiceImpl(
         qrCode.qrExpirationDate = qrCode.qrExpirationDate
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
+        qrQueue.add(Pair(qrUrl.qrId!!, qrStaticDto.qrExpirationDate!!))
         return qrUrl
     }
 
@@ -96,20 +96,21 @@ class QrServiceImpl(
     }
 
     @Scheduled(fixedDelay = 10000)
-    override fun checkQrExpirationDate() {
-        val size = qrDynamicQueue.size
+    override fun checkQrExpirationDateTime() {
+        var size = qrQueue.size
         while (size > 0) {
-            val current = qrDynamicQueue.poll()
-            val expirationDateTime = LocalDateTime.parse(current.second, DateTimeFormatter.ofPattern("YYYY-MM-DD ТHH24:MM:SS±HH:MM / +nM / +nm"))
-            if (!expirationDateTime.isAfter(LocalDateTime.now())) {
+            val current = qrQueue.poll()
+            val expirationDateTime = OffsetDateTime.parse(current.second, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
+            if (!expirationDateTime.isAfter(OffsetDateTime.now())) {
                 databaseApiClient.update(
                     "http://147.78.66.234:9091/database-api/v1/qrs/",
                     current.first,
                     "EXPIRED"
                 )
             } else {
-                qrDynamicQueue.add(current)
+                qrQueue.add(current)
             }
+            size--;
         }
     }
 }
