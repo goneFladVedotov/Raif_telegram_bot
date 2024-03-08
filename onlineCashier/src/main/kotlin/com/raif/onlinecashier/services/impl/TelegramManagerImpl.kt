@@ -15,6 +15,7 @@ class TelegramManagerImpl(
     @EventListener
     fun update(update: Update) {
         if (update.hasMessage()) {
+            dataService.test()
             val msg = update.message
             val chatId = msg.chatId
             val text = msg.text
@@ -55,8 +56,6 @@ class TelegramManagerImpl(
             return
         }
         dataService.addOrderProduct(chatId, name)
-        telegramService.sendMessage(chatId, "Товар успешно добавлен в заказ" +
-                "")
-
+        telegramService.sendMessage(chatId, "Товар успешно добавлен в заказ")
     }
 }

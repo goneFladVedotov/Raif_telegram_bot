@@ -1,15 +1,22 @@
 package com.raif.onlinecashier.services.impl
 
+import com.raif.onlinecashier.models.repositories.QrObjectRepository
 import com.raif.onlinecashier.services.DataService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class DataServiceImpl : DataService {
+class DataServiceImpl(
+    private val qrObjectRepository: QrObjectRepository
+) : DataService {
 
     private val logger = LoggerFactory.getLogger("DataLayer")
     private var menues: MutableMap<Long, MutableMap<String, Double>> = mutableMapOf();
     private var orders: MutableMap<Long, MutableList<String>> = mutableMapOf();
+
+    override fun test() {
+        println(qrObjectRepository.findAll())
+    }
 
     override fun addMenuProduct(chatId: Long, name: String, price: Double) {
         if (!menues.contains(chatId)) {
