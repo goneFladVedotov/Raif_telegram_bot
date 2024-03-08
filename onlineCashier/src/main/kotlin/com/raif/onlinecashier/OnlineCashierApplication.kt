@@ -1,6 +1,6 @@
 package com.raif.onlinecashier
 
-import com.raif.onlinecashier.services.impl.TelegramServiceImpl
+import com.raif.onlinecashier.services.TelegramService
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 @Configuration
 class BotConfig {
     @Bean
-    fun telegramBotsApi(bot: TelegramServiceImpl): TelegramBotsApi =
+    fun telegramBotsApi(bot: TelegramService): TelegramBotsApi =
         TelegramBotsApi(DefaultBotSession::class.java).apply {
             registerBot(bot)
         }
