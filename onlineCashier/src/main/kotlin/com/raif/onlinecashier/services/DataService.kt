@@ -12,9 +12,6 @@ class DataService(
 ) {
 
     private val logger = LoggerFactory.getLogger("DataLayer")
-    private var menues: MutableMap<Long, MutableMap<String, Double>> = mutableMapOf();
-    private var orders: MutableMap<Long, MutableList<String>> = mutableMapOf();
-
 
     fun addMenuProduct(chatId: Long, name: String, price: Double) {
         val entity = MenuEntity(chatId, name, price)
