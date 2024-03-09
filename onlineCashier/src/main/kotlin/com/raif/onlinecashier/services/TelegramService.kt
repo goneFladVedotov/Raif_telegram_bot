@@ -40,11 +40,15 @@ class TelegramService(
         chatId: Long,
         text: String,
         replyMarkup: ReplyKeyboard? = null,
-        markdown: String = "HTML",
+        markdown: Boolean = false,
         replyTo: Int? = null
     ): Int {
         val send = SendMessage(chatId.toString(), text)
-        send.parseMode = markdown
+        if (markdown) {
+            send.parseMode = "markdownV2"
+        } else {
+            send.parseMode = "HTML"
+        }
         if (replyTo != null) {
             send.replyToMessageId = replyTo
         }

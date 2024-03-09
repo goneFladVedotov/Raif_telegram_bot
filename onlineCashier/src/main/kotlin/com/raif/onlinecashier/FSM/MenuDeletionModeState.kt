@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import kotlin.math.max
 import kotlin.math.min
 
-class MenuState(
+class MenuDeletionModeState(
     private val stateController: StateController,
     private val page: Int,
 ) : State {
@@ -18,62 +18,62 @@ class MenuState(
             val query = update.callbackQuery
             val data = query.data
             when {
-                data == "menu_left" -> {
+                data == "del_menu_left" -> {
                     stateController.answer(query.id)
-                    return MenuState(stateController, max(1, page - 1))
+                    return MenuDeletionModeState(stateController, max(1, page - 1))
                 }
 
-                data == "menu_right" -> {
+                data == "del_menu_right" -> {
                     stateController.answer(query.id)
-                    return MenuState(stateController, min(getLength(), page + 1))
+                    return MenuDeletionModeState(stateController, min(getLength(), page + 1))
                 }
 
-                data == "menu_add" -> {
+                data == "del_menu_add" -> {
                     stateController.answer(query.id)
                     return AddProductEnterNameState(stateController)
                 }
 
 
-                data == "menu_delmode" -> {
+                data == "del_menu_delmode" -> {
                     stateController.answer(query.id)
-                    return MenuDeletionModeState(stateController, page)
+                    return MenuState(stateController, page)
                 }
 
-                data == "menu_exit" -> {
+                data == "del_menu_exit" -> {
                     stateController.answer(query.id)
                     return HomeState(stateController)
                 }
 
-                data.startsWith("menu_") -> {
+                data.startsWith("del_menu_") -> {
                     //Add to order
                     stateController.answer(query.id)
                 }
             }
 
         }
-        return MenuState(stateController, page)
+        return MenuDeletionModeState(stateController, page)
     }
 
 
     override fun show() {
         val text =
             "Каталог товаров (<code>$page/${getLength()}</code>) :\n" +
-            "Нажмите на товар, чтобы добавить его в корзину."
+            "Нажмите на товар, чтобы <b><i>удалить</i></b> его из меню."
         val menu = stateController.dataService.listMenu(stateController.chatId)
         val menuButtons = mutableListOf<List<String>>()
         for ((product, price) in menu) {
             menuButtons.add(listOf("$product ($price руб)"))
         }
-        menuButtons.add(listOf("⬅\uFE0F", "\uD83C\uDD95", "\uD83D\uDDD1\uFE0F❌", "➡\uFE0F"))
+        menuButtons.add(listOf("⬅\uFE0F", " ", "\uD83D\uDDD1\uFE0F✅", "➡\uFE0F"))
         menuButtons.add(listOf("Выход↩\uFE0F"))
 
         val markup = Utilities.makeInlineKeyboard(
-            menuButtons, "menu", mapOf(
-                menu.size + 1 to "menu_left",
-                menu.size + 2 to "menu_add",
-                menu.size + 3 to "menu_delmode",
-                menu.size + 4 to "menu_right",
-                menu.size + 5 to "menu_exit",
+            menuButtons, "del_menu", mapOf(
+                menu.size + 1 to "del_menu_left",
+                menu.size + 2 to "del_menu_add",
+                menu.size + 3 to "del_menu_delmode",
+                menu.size + 4 to "del_menu_right",
+                menu.size + 5 to "del_menu_exit",
             )
         )
 
