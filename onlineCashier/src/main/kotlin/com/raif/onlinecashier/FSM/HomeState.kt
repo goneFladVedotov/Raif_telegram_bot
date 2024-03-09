@@ -10,6 +10,7 @@ class HomeState(
         if (update.hasCallbackQuery()) {
             val query = update.callbackQuery
             if (query.data == "homepage_1") {
+                stateController.answer(query.id)
                 return MenuState(stateController, 1)
             }
         }
