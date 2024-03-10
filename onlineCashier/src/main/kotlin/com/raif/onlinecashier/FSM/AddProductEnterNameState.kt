@@ -16,6 +16,7 @@ class AddProductEnterNameState(
             } else if (text.length > Constants.ITEM_NAME_MAX_LENGTH) {
                 stateController.send("Длина названия не должна привышать ${Constants.ITEM_NAME_MAX_LENGTH} символов")
             } else {
+
                 return AddProductEnterPriceState(stateController, text)
             }
         }
@@ -24,6 +25,7 @@ class AddProductEnterNameState(
             val (id, params) = Utilities.parseCallback(query, "add_product_name") ?: return this
             when (id) {
                 "cancel" -> {
+                    stateController.answer(query.id)
                     return MenuState(stateController, 1)
                 }
             }

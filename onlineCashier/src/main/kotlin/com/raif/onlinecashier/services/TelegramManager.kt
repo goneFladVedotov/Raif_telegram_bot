@@ -1,5 +1,6 @@
 package com.raif.onlinecashier.services
 
+import com.raif.onlinecashier.FSM.HomeState
 import com.raif.onlinecashier.FSM.InitialState
 import com.raif.onlinecashier.FSM.State
 import com.raif.onlinecashier.FSM.StateController
@@ -23,19 +24,33 @@ class TelegramManager(
         if (update.hasMessage()) {
             val chatId = update.message.chatId
             val stateController = StateController(telegramService, dataService, chatId)
+            try{
+                states[chatId] = states.getOrDefault(chatId, InitialState(stateController)).nextState(update)
+            } catch(e: Throwable) {
+                states[chatId] = HomeState(stateController)
+            }
 
-            states[chatId] = states.getOrDefault(chatId, InitialState(stateController)).nextState(update)
             states[chatId]?.show()
+
+
         }
         if (update.hasCallbackQuery()) {
             val chatId = update.callbackQuery.message.chatId
             val stateController = StateController(telegramService, dataService, chatId)
 
-            states[chatId] = states.getOrDefault(chatId, InitialState(stateController)).nextState(update)
+            try{
+                states[chatId] = states.getOrDefault(chatId, InitialState(stateController)).nextState(update)
+            } catch (e: Exception) {
+                states[chatId] = HomeState(stateController)
+            }
             states[chatId]?.show()
         }
 
         return
+    }
+
+    fun test() {
+        dataService.addOrderProduct(472209097, 1    )
     }
 
 

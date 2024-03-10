@@ -50,12 +50,12 @@ class MenuState(
 
                 "addToCart" -> {
                     //Add to order
-                    stateController.dataService.addOrderProduct(stateController.chatId, params[0].toString())
+                    stateController.dataService.addOrderProduct(stateController.chatId, params[0].toString().toInt())
                     stateController.answer(query.id, "Товар \"${params[0]}\" пока не успешно добавлен в корзину")
                     return this
                 }
                 "empty" -> {
-                    stateController.answer(query.id, "Товар \"${params[0]}\" пока не успешно добавлен в корзину")
+                    stateController.answer(query.id)
                     return this
                 }
             }
@@ -77,7 +77,7 @@ class MenuState(
         val menu = stateController.dataService.getMenuItems(stateController.chatId, page - 1)
         val menuButtons = mutableListOf<List<MyInlineButton>>()
         for (ent in menu) {
-            menuButtons.add(listOf(MyInlineButton("${ent.name} (${ent.price} руб)", "addToCart", listOf(ent.name))))
+            menuButtons.add(listOf(MyInlineButton("${ent.name} (${ent.price} руб)", "addToCart", listOf(ent.id, ent.name))))
         }
         for (i in menu.size..<Constants.ITEMS_ON_PAGE) {
             menuButtons.add(listOf(MyInlineButton()))

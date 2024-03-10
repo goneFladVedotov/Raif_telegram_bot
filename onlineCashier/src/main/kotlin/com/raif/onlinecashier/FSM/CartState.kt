@@ -43,7 +43,7 @@ class CartState(
 
                 "addToCart" -> {
                     //Add to order
-                    stateController.dataService.addOrderProduct(stateController.chatId, params[0].toString())
+                    stateController.dataService.addOrderProduct(stateController.chatId, params[0].toString().toInt())
                     stateController.answer(query.id, "Товар \"${params[0]}\" пока не успешно добавлен в корзину")
                     return this
                 }

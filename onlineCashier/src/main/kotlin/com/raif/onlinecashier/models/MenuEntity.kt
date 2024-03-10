@@ -13,17 +13,17 @@ import org.springframework.validation.annotation.Validated
 @Table(name = "menus")
 class MenuEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    val id: String = "",
-    @Column(nullable = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    val id: Int = 0,
+    @Column(nullable = false)
     val chatId: Long = 0,
-    @Column(nullable = true)
+    @Column(nullable = false)
     val name: String = "",
-    @Column(nullable = true)
-    @Min(value = 1, message = "amount must be greater than 0")
+    @Column(nullable = false)
     val price: Double = 0.0,
 ) {
-    constructor(chatId: Long, name: String, price: Double) : this("", chatId, name, price)
+    constructor(chatId: Long, name: String, price: Double) : this(0, chatId, name, price)
 }
 
 @Repository

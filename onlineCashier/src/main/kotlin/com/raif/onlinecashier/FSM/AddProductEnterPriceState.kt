@@ -22,6 +22,7 @@ class AddProductEnterPriceState(
             val (id, params) = Utilities.parseCallback(query, "add_product_price") ?: return this
             when (id) {
                 "cancel" -> {
+                    stateController.answer(query.id)
                     return MenuState(stateController, 1)
                 }
             }

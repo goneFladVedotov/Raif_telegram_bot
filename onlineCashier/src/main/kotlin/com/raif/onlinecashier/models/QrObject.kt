@@ -11,13 +11,13 @@ class QrObject(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String = "",
-    @Column(unique = true, nullable = true)
+    @Column(unique = true, nullable = false)
     val qrId: String = "",
-    @Column(unique = true, nullable = true)
+    @Column(unique = true, nullable = false)
     val payload: String = "",
-    @Column(unique = true, nullable = true)
+    @Column(unique = true, nullable = false)
     val qrUrl: String = "",
-    @Column(nullable = true)
+    @Column(nullable = false)
     val qrStatus: String = "",
 ) {
     constructor(qrId: String, payload: String, qrUrl: String, qrStatus: String) :

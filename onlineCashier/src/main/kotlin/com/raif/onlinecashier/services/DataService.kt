@@ -26,10 +26,10 @@ class DataService(
         TODO("Not implemented")
     }
 
-    fun addOrderProduct(chatId: Long, name: String) {
-        val entity = OrderEntity(chatId, name, 1)
+    fun addOrderProduct(chatId: Long, id: Int) {
+        val entity = OrderEntity(chatId, MenuEntity(id), 1)
         orderEntityRepository.saveAndFlush(entity)
-        logger.info("Add to [$chatId] order item ($name)")
+        logger.info("Add to [$chatId] order item ($id)")
     }
 
     fun delOrderProduct(chatId: Long, name: String) {
