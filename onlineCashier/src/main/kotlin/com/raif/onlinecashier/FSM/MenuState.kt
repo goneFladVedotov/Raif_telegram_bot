@@ -1,6 +1,9 @@
 package com.raif.onlinecashier.FSM
 
+import com.raif.onlinecashier.MyInlineButton
 import com.raif.onlinecashier.Utilities
+import org.json.JSONException
+import org.json.JSONObject
 import org.telegram.telegrambots.meta.api.objects.Update
 import kotlin.math.max
 import kotlin.math.min
@@ -16,67 +19,65 @@ class MenuState(
     override fun nextState(update: Update): State {
         if (update.hasCallbackQuery()) {
             val query = update.callbackQuery
-            val data = query.data
-            when {
-                data == "menu_left" -> {
+            val (id, params) = Utilities.parseCallback(query, "menu") ?: return this
+            when (id) {
+                "left" -> {
                     stateController.answer(query.id)
                     return MenuState(stateController, max(1, page - 1))
                 }
 
-                data == "menu_right" -> {
+                "right" -> {
                     stateController.answer(query.id)
                     return MenuState(stateController, min(getLength(), page + 1))
                 }
 
-                data == "menu_add" -> {
+                "add" -> {
                     stateController.answer(query.id)
                     return AddProductEnterNameState(stateController)
                 }
 
 
-                data == "menu_delmode" -> {
+                "delmode" -> {
                     stateController.answer(query.id)
                     return MenuDeletionModeState(stateController, page)
                 }
 
-                data == "menu_exit" -> {
+                "exit" -> {
                     stateController.answer(query.id)
                     return HomeState(stateController)
                 }
 
-                data.startsWith("menu_") -> {
+                else -> {
                     //Add to order
                     stateController.answer(query.id)
                 }
             }
 
         }
-        return MenuState(stateController, page)
+        return this
     }
 
 
     override fun show() {
         val text =
             "Каталог товаров (<code>$page/${getLength()}</code>) :\n" +
-            "Нажмите на товар, чтобы добавить его в корзину."
+                    "Нажмите на товар, чтобы добавить его в корзину."
         val menu = stateController.dataService.listMenu(stateController.chatId)
-        val menuButtons = mutableListOf<List<String>>()
+        val menuButtons = mutableListOf<List<MyInlineButton>>()
         for ((product, price) in menu) {
-            menuButtons.add(listOf("$product ($price руб)"))
+            menuButtons.add(listOf(MyInlineButton("$product ($price руб)")))
         }
-        menuButtons.add(listOf("⬅\uFE0F", "\uD83C\uDD95", "\uD83D\uDDD1\uFE0F❌", "➡\uFE0F"))
-        menuButtons.add(listOf("Выход↩\uFE0F"))
-
-        val markup = Utilities.makeInlineKeyboard(
-            menuButtons, "menu", mapOf(
-                menu.size + 1 to "left",
-                menu.size + 2 to "add",
-                menu.size + 3 to "delmode",
-                menu.size + 4 to "right",
-                menu.size + 5 to "exit",
+        menuButtons.add(
+            listOf(
+                MyInlineButton("⬅\uFE0F", "left"),
+                MyInlineButton("\uD83C\uDD95", "add"),
+                MyInlineButton("\uD83D\uDDD1\uFE0F❌", "delmode"),
+                MyInlineButton("➡\uFE0F", "right")
             )
         )
+        menuButtons.add(listOf(MyInlineButton("Выход↩\uFE0F", "exit")))
 
+        val markup = Utilities.makeInlineKeyboard(menuButtons, "menu")
         stateController.send(text, markup)
 
 

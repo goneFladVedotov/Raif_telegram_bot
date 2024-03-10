@@ -1,5 +1,6 @@
 package com.raif.onlinecashier.FSM
 
+import com.raif.onlinecashier.MyInlineButton
 import com.raif.onlinecashier.Utilities
 import org.telegram.telegrambots.meta.api.objects.Update
 
@@ -34,7 +35,10 @@ class AddProductConfirmationState(
                     "Название: $name\n" +
                     "Цена: $price"
         val markup = Utilities.makeInlineKeyboard(
-            listOf(listOf("Отмена"), listOf("Добавить")), "add_product_confirmation"
+            listOf(
+                listOf(MyInlineButton("Отмена")),
+                listOf(MyInlineButton("Добавить"))
+            ), "add_product_confirmation"
         )
         stateController.send(text, markup)
     }

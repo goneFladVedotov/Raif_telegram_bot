@@ -1,5 +1,6 @@
 package com.raif.onlinecashier.FSM
 
+import com.raif.onlinecashier.MyInlineButton
 import com.raif.onlinecashier.Utilities
 import org.telegram.telegrambots.meta.api.objects.Update
 
@@ -25,7 +26,11 @@ class AddProductEnterNameState(
             "Пожалуйста, введите информацию о товаре, который вы хотите добавить. \n" +
                     "Название: ?\n" +
                     "Цена: ?"
-        val markup = Utilities.makeInlineKeyboard(listOf(listOf("Отмена")), "add_product_name")
+        val markup = Utilities.makeInlineKeyboard(
+            listOf(
+                listOf(MyInlineButton("Отмена"))
+            ), "add_product_name"
+        )
         stateController.send(text, markup)
     }
 
