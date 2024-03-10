@@ -33,6 +33,12 @@ class MenuState(
                     return AddProductEnterNameState(stateController)
                 }
 
+
+                data == "menu_delmode" -> {
+                    stateController.answer(query.id)
+                    return MenuDeletionModeState(stateController, page)
+                }
+
                 data == "menu_exit" -> {
                     stateController.answer(query.id)
                     return HomeState(stateController)
@@ -50,21 +56,24 @@ class MenuState(
 
 
     override fun show() {
-        val text = "Каталог товаров ($page) :"
+        val text =
+            "Каталог товаров (<code>$page/${getLength()}</code>) :\n" +
+            "Нажмите на товар, чтобы добавить его в корзину."
         val menu = stateController.dataService.listMenu(stateController.chatId)
         val menuButtons = mutableListOf<List<String>>()
         for ((product, price) in menu) {
             menuButtons.add(listOf("$product ($price руб)"))
         }
-        menuButtons.add(listOf("⬅\uFE0F", "➕", "➡\uFE0F"))
+        menuButtons.add(listOf("⬅\uFE0F", "\uD83C\uDD95", "\uD83D\uDDD1\uFE0F❌", "➡\uFE0F"))
         menuButtons.add(listOf("Выход↩\uFE0F"))
 
         val markup = Utilities.makeInlineKeyboard(
             menuButtons, "menu", mapOf(
-                menu.size + 1 to "menu_left",
-                menu.size + 2 to "menu_add",
-                menu.size + 3 to "menu_right",
-                menu.size + 4 to "menu_exit",
+                menu.size + 1 to "left",
+                menu.size + 2 to "add",
+                menu.size + 3 to "delmode",
+                menu.size + 4 to "right",
+                menu.size + 5 to "exit",
             )
         )
 

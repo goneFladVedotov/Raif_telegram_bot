@@ -9,8 +9,8 @@ class StateController(
     val dataService: DataService,
     val chatId: Long,
 ) {
-    fun send(text: String, replyMarkup: ReplyKeyboard? = null): Int {
-        return telegramService.sendMessage(chatId, text, replyMarkup)
+    fun send(text: String, replyMarkup: ReplyKeyboard? = null, markdown: Boolean = false, replyTo: Int? = null): Int {
+        return telegramService.sendMessage(chatId, text, replyMarkup, markdown, replyTo)
     }
 
     fun answer(id: String) {

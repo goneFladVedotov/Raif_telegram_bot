@@ -16,10 +16,10 @@ class Utilities {
                 keyboard.add(mutableListOf())
                 for (butText in row) {
                     i += 1
-                    var button = InlineKeyboardButton(butText)
+                    val button = InlineKeyboardButton(butText)
                     var cb = callbackPrefix + "_$i"
                     if (callback.contains(i)) {
-                        cb = callback[i]!!
+                        cb = callbackPrefix + "_${callback[i]!!}"
                     }
                     button.callbackData = cb
                     keyboard.last().add(button)
