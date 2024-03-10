@@ -14,12 +14,12 @@ class AddProductConfirmationState(
             val query = update.callbackQuery
             val (id, params) = Utilities.parseCallback(query, "add_product_confirmation") ?: return this
             when (id) {
-                "1" -> {
+                "cancel" -> {
                     stateController.answer(query.id)
                     return MenuState(stateController, 1)
                 }
 
-                "2" -> {
+                "confirm" -> {
                     stateController.answer(query.id)
                     stateController.dataService.addMenuProduct(stateController.chatId, name, price)
                     return MenuState(stateController, 1)
@@ -36,8 +36,8 @@ class AddProductConfirmationState(
                     "Цена: $price"
         val markup = Utilities.makeInlineKeyboard(
             listOf(
-                listOf(MyInlineButton("Отмена")),
-                listOf(MyInlineButton("Добавить"))
+                listOf(MyInlineButton("Отмена", "cancel")),
+                listOf(MyInlineButton("Добавить", "confirm"))
             ), "add_product_confirmation"
         )
         stateController.send(text, markup)

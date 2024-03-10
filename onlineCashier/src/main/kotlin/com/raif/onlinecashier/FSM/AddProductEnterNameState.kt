@@ -19,6 +19,16 @@ class AddProductEnterNameState(
                 return AddProductEnterPriceState(stateController, text)
             }
         }
+        if (update.hasCallbackQuery()) {
+            val query = update.callbackQuery
+            val (id, params) = Utilities.parseCallback(query, "add_product_name") ?: return this
+            when (id) {
+                "cancel" -> {
+                    return MenuState(stateController, 1)
+                }
+            }
+
+        }
         return AddProductEnterNameState(stateController)
     }
 
@@ -29,7 +39,7 @@ class AddProductEnterNameState(
                     "Цена: ?"
         val markup = Utilities.makeInlineKeyboard(
             listOf(
-                listOf(MyInlineButton("Отмена"))
+                listOf(MyInlineButton("Отмена", "cancel"))
             ), "add_product_name"
         )
         stateController.send(text, markup)

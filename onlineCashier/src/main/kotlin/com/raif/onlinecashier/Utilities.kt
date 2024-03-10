@@ -13,19 +13,13 @@ class Utilities {
             callbackPrefix: String
         ): InlineKeyboardMarkup {
             val keyboard = mutableListOf<MutableList<InlineKeyboardButton>>()
-            var i = 0
             for (row in buttons) {
                 keyboard.add(mutableListOf())
                 for (button in row) {
-                    i += 1
                     val inlbutton = InlineKeyboardButton(button.text)
-                    if (button.id == "") {
-                        button.id = "$i"
-                    }
-
                     val callback = JSONObject(
                         mapOf(
-                            "id" to callbackPrefix + "${Constants.CALLBACK_ID_SEPARATOR}${button.id}",
+                            "id" to "${callbackPrefix}${Constants.CALLBACK_ID_SEPARATOR}${button.id}",
                             "params" to button.params
                         )
                     ).toString()
@@ -63,6 +57,5 @@ class MyInlineButton(
 
     ) {
     constructor(text: String, id: String) : this(text, id, listOf())
-    constructor(text: String, params: List<Any>) : this(text, "", params)
-    constructor(text: String) : this(text, "", listOf())
+    constructor(): this(" ", "empty")
 }

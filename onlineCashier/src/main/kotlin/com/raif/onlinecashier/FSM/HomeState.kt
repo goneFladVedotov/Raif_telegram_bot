@@ -12,7 +12,6 @@ class HomeState(
     override fun nextState(update: Update): State {
         if (update.hasCallbackQuery()) {
             val query = update.callbackQuery
-
             val (id, params) = Utilities.parseCallback(query, "homepage") ?: return this
             when (id) {
                 "menu" -> {

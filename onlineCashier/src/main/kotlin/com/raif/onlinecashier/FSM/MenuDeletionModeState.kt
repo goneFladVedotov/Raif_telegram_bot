@@ -79,7 +79,7 @@ class MenuDeletionModeState(
             )
         }
         for (i in menu.size..<Constants.ITEMS_ON_PAGE) {
-            menuButtons.add(listOf(MyInlineButton(" ", "empty")))
+            menuButtons.add(listOf(MyInlineButton()))
         }
         menuButtons.add(
             listOf(

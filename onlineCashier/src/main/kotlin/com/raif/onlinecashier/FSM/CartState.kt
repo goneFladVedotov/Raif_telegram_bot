@@ -74,7 +74,7 @@ class CartState(
             menuButtons.add(listOf(MyInlineButton("${ent.name} (${ent.price} руб)", "addToCart", listOf(ent.name))))
         }
         for (i in menu.size..<Constants.ITEMS_ON_PAGE) {
-            menuButtons.add(listOf(MyInlineButton(" ", "empty")))
+            menuButtons.add(listOf(MyInlineButton()))
         }
         menuButtons.add(
             listOf(
