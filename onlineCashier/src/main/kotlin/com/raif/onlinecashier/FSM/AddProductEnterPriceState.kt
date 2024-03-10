@@ -11,8 +11,8 @@ class AddProductEnterPriceState(
     override fun nextState(update: Update): State {
         if (update.hasMessage()) {
             val price = update.message.text.toDoubleOrNull()
-            if (price == null) {
-                stateController.send("Введите дробное число")
+            if (price == null || price < 0) {
+                stateController.send("Введите положительное дробное число через точку (12.34)")
             } else {
                 return AddProductConfirmationState(stateController, name, price)
             }

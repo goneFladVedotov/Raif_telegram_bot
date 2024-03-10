@@ -13,7 +13,7 @@ class StateController(
         return telegramService.sendMessage(chatId, text, replyMarkup, markdown, replyTo)
     }
 
-    fun answer(id: String) {
-        telegramService.answerCallback(id)
+    fun answer(id: String, text: String = "", alert: Boolean = false) {
+        telegramService.answerCallback(id, text, alert)
     }
 }

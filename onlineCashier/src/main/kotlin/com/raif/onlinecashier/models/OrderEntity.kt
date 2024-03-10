@@ -1,6 +1,8 @@
 package com.raif.onlinecashier.models
 
 import jakarta.persistence.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -23,5 +25,5 @@ class OrderEntity(
 
 @Repository
 interface OrderEntityRepository : JpaRepository<OrderEntity, String> {
-    fun findByChatId(chatId: Long): List<OrderEntity>
+    fun findByChatId(chatId: Long, page: Pageable): Page<OrderEntity>
 }

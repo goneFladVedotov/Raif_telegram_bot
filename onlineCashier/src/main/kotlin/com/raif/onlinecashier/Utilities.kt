@@ -25,7 +25,7 @@ class Utilities {
 
                     val callback = JSONObject(
                         mapOf(
-                            "id" to callbackPrefix + "|${button.id}",
+                            "id" to callbackPrefix + "${Constants.CALLBACK_ID_SEPARATOR}${button.id}",
                             "params" to button.params
                         )
                     ).toString()
@@ -46,7 +46,7 @@ class Utilities {
             }
             var id = data.getString("id")
             val params = data.getJSONArray("params").toList()
-            if (!data.getString("id").startsWith("$prefix|")) {
+            if (!data.getString("id").startsWith("$prefix${Constants.CALLBACK_ID_SEPARATOR}")) {
                 return null
             }
             id = id.slice(prefix.length + 1..<id.length)
@@ -65,5 +65,4 @@ class MyInlineButton(
     constructor(text: String, id: String) : this(text, id, listOf())
     constructor(text: String, params: List<Any>) : this(text, "", params)
     constructor(text: String) : this(text, "", listOf())
-
 }

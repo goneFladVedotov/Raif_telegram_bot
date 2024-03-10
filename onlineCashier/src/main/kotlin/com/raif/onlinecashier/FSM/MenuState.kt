@@ -1,5 +1,6 @@
 package com.raif.onlinecashier.FSM
 
+import com.raif.onlinecashier.Constants
 import com.raif.onlinecashier.MyInlineButton
 import com.raif.onlinecashier.Utilities
 import org.json.JSONException
@@ -13,7 +14,7 @@ class MenuState(
     private val page: Int,
 ) : State {
     private fun getLength(): Int {
-        return 10
+        return 3
     }
 
     override fun nextState(update: Update): State {
@@ -47,9 +48,9 @@ class MenuState(
                     return HomeState(stateController)
                 }
 
-                else -> {
+                "addToCart" -> {
                     //Add to order
-                    stateController.answer(query.id)
+                    stateController.answer(query.id, "Товар \"${params[0]}\" пока не успешно добавлен в корзину")
                 }
             }
 
@@ -59,20 +60,25 @@ class MenuState(
 
 
     override fun show() {
+        val pageCount = getLength()
+
         val text =
-            "Каталог товаров (<code>$page/${getLength()}</code>) :\n" +
+            "Каталог товаров (<code>$page/$pageCount</code>) :\n" +
                     "Нажмите на товар, чтобы добавить его в корзину."
-        val menu = stateController.dataService.listMenu(stateController.chatId)
+        val menu = stateController.dataService.getMenuItems(stateController.chatId, page - 1)
         val menuButtons = mutableListOf<List<MyInlineButton>>()
-        for ((product, price) in menu) {
-            menuButtons.add(listOf(MyInlineButton("$product ($price руб)")))
+        for (ent in menu) {
+            menuButtons.add(listOf(MyInlineButton("${ent.name} (${ent.price} руб)", "addToCart", listOf(ent.name))))
+        }
+        for (i in menu.size..<Constants.ITEMS_ON_PAGE) {
+            menuButtons.add(listOf(MyInlineButton(" ")))
         }
         menuButtons.add(
             listOf(
-                MyInlineButton("⬅\uFE0F", "left"),
+                MyInlineButton(if (page > 1) "⬅\uFE0F" else " ", "left"),
                 MyInlineButton("\uD83C\uDD95", "add"),
                 MyInlineButton("\uD83D\uDDD1\uFE0F❌", "delmode"),
-                MyInlineButton("➡\uFE0F", "right")
+                MyInlineButton(if (page < pageCount) "➡\uFE0F" else " ", "right")
             )
         )
         menuButtons.add(listOf(MyInlineButton("Выход↩\uFE0F", "exit")))

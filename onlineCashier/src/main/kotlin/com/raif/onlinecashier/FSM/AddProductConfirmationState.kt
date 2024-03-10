@@ -12,14 +12,14 @@ class AddProductConfirmationState(
     override fun nextState(update: Update): State {
         if (update.hasCallbackQuery()) {
             val query = update.callbackQuery
-            val data = query.data
-            when (data) {
-                "add_product_confirmation_1" -> {
+            val (id, params) = Utilities.parseCallback(query, "add_product_confirmation") ?: return this
+            when (id) {
+                "1" -> {
                     stateController.answer(query.id)
                     return MenuState(stateController, 1)
                 }
 
-                "add_product_confirmation_2" -> {
+                "2" -> {
                     stateController.answer(query.id)
                     stateController.dataService.addMenuProduct(stateController.chatId, name, price)
                     return MenuState(stateController, 1)

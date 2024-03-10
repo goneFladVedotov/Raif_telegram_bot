@@ -1,5 +1,6 @@
 package com.raif.onlinecashier.FSM
 
+import com.raif.onlinecashier.Constants
 import com.raif.onlinecashier.MyInlineButton
 import com.raif.onlinecashier.Utilities
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -12,8 +13,8 @@ class AddProductEnterNameState(
             val text = update.message.text
             if ("\n" in text) {
                 stateController.send("Название не должно содержать переносов строки")
-            } else if (text.length > MAX_NAME_LENGTH) {
-                stateController.send("Длина названия не должна привышать $MAX_NAME_LENGTH символов")
+            } else if (text.length > Constants.ITEM_NAME_MAX_LENGTH) {
+                stateController.send("Длина названия не должна привышать ${Constants.ITEM_NAME_MAX_LENGTH} символов")
             } else {
                 return AddProductEnterPriceState(stateController, text)
             }
@@ -34,7 +35,4 @@ class AddProductEnterNameState(
         stateController.send(text, markup)
     }
 
-    companion object {
-        const val MAX_NAME_LENGTH = 100
-    }
 }
