@@ -36,25 +36,6 @@ class DataService(
         TODO("Waiting for buttons and FSM")
     }
 
-
-    fun listMenu(chatId: Long): Map<String, Double> {
-        val menu = getMenuItems(chatId, 0)
-        val res: MutableMap<String, Double>  = mutableMapOf()
-        for (ent in menu) {
-            res[ent.name] = ent.price
-        }
-        return res
-    }
-
-    fun listOrder(chatId: Long): List<String> {
-        val menu = getOrderItems(chatId, 0)
-        val res: MutableList<String>  = mutableListOf()
-        for (ent in menu) {
-            res.add(ent.name)
-        }
-        return res
-    }
-
     fun getMenuItems(chatId: Long, page: Int): List<MenuEntity> {
         val pageable = PageRequest.of(page, Constants.ITEMS_ON_PAGE, Sort.by("name").ascending())
         val pageResult = menuEntityRepository.findByChatId(chatId, pageable)

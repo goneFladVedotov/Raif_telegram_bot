@@ -15,9 +15,13 @@ class HomeState(
 
             val (id, params) = Utilities.parseCallback(query, "homepage") ?: return this
             when (id) {
-                "1" -> {
+                "menu" -> {
                     stateController.answer(query.id)
                     return MenuState(stateController, 1)
+                }
+                "cart" -> {
+                    stateController.answer(query.id)
+                    return CartState(stateController, 1)
                 }
             }
         }
@@ -29,8 +33,8 @@ class HomeState(
         val text = "Навигация:"
         val markup = Utilities.makeInlineKeyboard(
             listOf(
-                listOf(MyInlineButton("Меню")),
-                listOf(MyInlineButton("Корзина")),
+                listOf(MyInlineButton("Меню", "menu")),
+                listOf(MyInlineButton("Корзина", "cart")),
             ), "homepage"
         )
 

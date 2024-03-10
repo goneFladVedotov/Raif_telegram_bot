@@ -11,10 +11,10 @@ import kotlin.math.min
 
 class MenuDeletionModeState(
     private val stateController: StateController,
-    private val page: Int,
+    private var page: Int,
 ) : State {
     private fun getLength(): Int {
-        return 10
+        return 3
     }
 
     override fun nextState(update: Update): State {
@@ -50,6 +50,12 @@ class MenuDeletionModeState(
                 "deleteFromMenu" -> {
                     //Add to order
                     stateController.answer(query.id, "Товар \"${params[0]}\" пока не успешно удален")
+                    return this
+                }
+
+                "empty" -> {
+                    stateController.answer(query.id)
+                    return this
                 }
             }
 
@@ -60,6 +66,8 @@ class MenuDeletionModeState(
 
     override fun show() {
         val pageCount = getLength()
+        page = max(1, page)
+        page = min(page, pageCount)
         val text =
             "Каталог товаров (<code>$page/$pageCount</code>) :\n" +
                     "Нажмите на товар, чтобы <b><i><u>УДАЛИТЬ</u></i></b> его из списка товаров."
@@ -71,7 +79,7 @@ class MenuDeletionModeState(
             )
         }
         for (i in menu.size..<Constants.ITEMS_ON_PAGE) {
-            menuButtons.add(listOf(MyInlineButton(" ")))
+            menuButtons.add(listOf(MyInlineButton(" ", "empty")))
         }
         menuButtons.add(
             listOf(
