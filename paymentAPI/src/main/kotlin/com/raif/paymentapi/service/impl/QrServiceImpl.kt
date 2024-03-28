@@ -56,7 +56,9 @@ class QrServiceImpl(
                 0
             )
         )
-        qrQueue.add(Pair(qrUrl.qrId!!, qrDynamicDto.qrExpirationDate!!))
+        if (qrDynamicDto.qrExpirationDate != null) {
+            qrQueue.add(Pair(qrUrl.qrId!!, qrDynamicDto.qrExpirationDate!!))
+        }
         return qrUrl
     }
 
@@ -70,7 +72,9 @@ class QrServiceImpl(
         qrCode.qrExpirationDate = qrCode.qrExpirationDate
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
-        qrQueue.add(Pair(qrUrl.qrId!!, qrStaticDto.qrExpirationDate!!))
+        if (qrStaticDto.qrExpirationDate != null) {
+            qrQueue.add(Pair(qrUrl.qrId!!, qrStaticDto.qrExpirationDate!!))
+        }
         return qrUrl
     }
 
