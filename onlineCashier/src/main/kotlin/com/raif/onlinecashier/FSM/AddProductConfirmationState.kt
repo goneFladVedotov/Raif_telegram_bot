@@ -21,7 +21,7 @@ class AddProductConfirmationState(
 
                 "confirm" -> {
                     stateController.answer(query.id)
-                    stateController.dataService.addMenuProduct(stateController.chatId, name, price)
+                    stateController.dataService.addMenuItem(stateController.chatId, name, price)
                     return MenuState(stateController, 1)
                 }
             }

@@ -3,8 +3,6 @@ package com.raif.onlinecashier.FSM
 import com.raif.onlinecashier.Constants
 import com.raif.onlinecashier.MyInlineButton
 import com.raif.onlinecashier.Utilities
-import org.json.JSONException
-import org.json.JSONObject
 import org.telegram.telegrambots.meta.api.objects.Update
 import kotlin.math.max
 import kotlin.math.min
@@ -13,10 +11,6 @@ class MenuDeletionModeState(
     private val stateController: StateController,
     private var page: Int,
 ) : State {
-    private fun getLength(): Int {
-        return 3
-    }
-
     override fun nextState(update: Update): State {
         if (update.hasCallbackQuery()) {
             val query = update.callbackQuery
@@ -24,12 +18,12 @@ class MenuDeletionModeState(
             when (id) {
                 "left" -> {
                     stateController.answer(query.id)
-                    return MenuDeletionModeState(stateController, max(1, page - 1))
+                    return MenuDeletionModeState(stateController, page - 1)
                 }
 
                 "right" -> {
                     stateController.answer(query.id)
-                    return MenuDeletionModeState(stateController, min(getLength(), page + 1))
+                    return MenuDeletionModeState(stateController, page + 1)
                 }
 
                 "add" -> {
@@ -49,7 +43,10 @@ class MenuDeletionModeState(
 
                 "deleteFromMenu" -> {
                     //Add to order
-                    stateController.answer(query.id, "Товар \"${params[0]}\" пока не успешно удален")
+                    val menuItemId = params[0].toString().toInt()
+                    val item = stateController.dataService.getMenuItem(menuItemId) ?: return this
+                    stateController.answer(query.id, "Товар \"${item.name}\" успешно удален")
+                    stateController.dataService.delMenuItem(menuItemId)
                     return this
                 }
 
@@ -65,7 +62,7 @@ class MenuDeletionModeState(
 
 
     override fun show() {
-        val pageCount = getLength()
+        val pageCount = stateController.dataService.getMenuPageCount(stateController.chatId)
         page = max(1, page)
         page = min(page, pageCount)
         val text =
@@ -75,7 +72,7 @@ class MenuDeletionModeState(
         val menuButtons = mutableListOf<List<MyInlineButton>>()
         for (ent in menu) {
             menuButtons.add(
-                listOf(MyInlineButton("${ent.name} (${ent.price} руб)", "deleteFromMenu", listOf(ent.name)))
+                listOf(MyInlineButton("${ent.name} (${ent.price} руб)", "deleteFromMenu", listOf(ent.id)))
             )
         }
         for (i in menu.size..<Constants.ITEMS_ON_PAGE) {
@@ -85,7 +82,7 @@ class MenuDeletionModeState(
             listOf(
                 MyInlineButton(if (page > 1) "⬅\uFE0F" else " ", "left"),
                 MyInlineButton("\uD83C\uDD95", "add"),
-                MyInlineButton("\uD83D\uDDD1\uFE0F❌", "delmode"),
+                MyInlineButton("\uD83D\uDDD1\uFE0F✅", "delmode"),
                 MyInlineButton(if (page < pageCount) "➡\uFE0F" else " ", "right")
             )
         )

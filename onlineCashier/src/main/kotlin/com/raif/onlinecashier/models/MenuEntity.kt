@@ -27,6 +27,7 @@ class MenuEntity(
 }
 
 @Repository
-interface MenuEntityRepository : JpaRepository<MenuEntity, String> {
+interface MenuEntityRepository : JpaRepository<MenuEntity, Int> {
     fun findByChatId(chatId: Long, page: Pageable): Page<MenuEntity>
+    fun countByChatId(chatId: Long): Int
 }

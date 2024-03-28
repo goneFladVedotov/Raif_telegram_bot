@@ -11,9 +11,6 @@ class CartState(
     private val stateController: StateController,
     private var page: Int,
 ) : State {
-    private fun getLength(): Int {
-        return 3
-    }
 
     override fun nextState(update: Update): State {
         if (update.hasCallbackQuery()) {
@@ -31,9 +28,10 @@ class CartState(
                 }
 
                 "deleteAll" -> {
+                    //TODO сделать отдельный стейт с подтверждением.
+                    stateController.dataService.clearCart(stateController.chatId)
                     stateController.answer(query.id)
-                    //TODO("DeleteAllState")
-//                    return MenuDeletionModeState(stateController, page)
+                    return CartState(stateController, 1)
                 }
 
                 "exit" -> {
@@ -41,13 +39,21 @@ class CartState(
                     return HomeState(stateController)
                 }
 
-                "addToCart" -> {
+                "delete" -> {
                     //Add to order
-                    stateController.dataService.addOrderProduct(stateController.chatId, params[0].toString().toInt())
-                    stateController.answer(query.id, "Товар \"${params[0]}\" пока не успешно добавлен в корзину")
+                    val orderId = params[0].toString().toInt()
+                    stateController.dataService.delOrderItem(orderId)
+                    val item = stateController.dataService.getOrderItem(orderId) ?: return this
+                    stateController.answer(query.id, "Товар \"${item.menuItem.name}\" успешно удален из корзины")
                     return this
                 }
+                "buy" -> {
+                    //TODO генрить куар
+                    // отправить пользователю и чекать оплату
 
+
+
+                }
                 "empty" -> {
                     stateController.answer(query.id)
                     return this
@@ -60,18 +66,27 @@ class CartState(
 
 
     override fun show() {
-        val pageCount = getLength()
+        val pageCount = stateController.dataService.getOrderPageCount(stateController.chatId)
         page = max(1, page)
         page = min(page, pageCount)
 
 
         val text =
             "Ваша корзина (<code>$page/$pageCount</code>) :\n" +
-            "Нажмите на товар, чтобы добавить его в корзину еще раз."
-        val menu = stateController.dataService.getMenuItems(stateController.chatId, page - 1)
+                    "Нажмите на товар, чтобы удалить его из корзины."
+        val menu = stateController.dataService.getOrderItems(stateController.chatId, page - 1)
+        println(menu)
         val menuButtons = mutableListOf<List<MyInlineButton>>()
         for (ent in menu) {
-            menuButtons.add(listOf(MyInlineButton("${ent.name} (${ent.price} руб)", "addToCart", listOf(ent.name))))
+            menuButtons.add(
+                listOf(
+                    MyInlineButton(
+                        "${ent.menuItem.name} (${ent.amount}x${ent.menuItem.price} = ${ent.menuItem.price * ent.amount} руб)",
+                        "delete",
+                        listOf(ent.menuItem.id)
+                    )
+                )
+            )
         }
         for (i in menu.size..<Constants.ITEMS_ON_PAGE) {
             menuButtons.add(listOf(MyInlineButton()))
@@ -83,6 +98,7 @@ class CartState(
                 MyInlineButton(if (page < pageCount) "➡\uFE0F" else " ", "right")
             )
         )
+        menuButtons.add(listOf(MyInlineButton("Купить", "buy")))
         menuButtons.add(listOf(MyInlineButton("Выход↩\uFE0F", "exit")))
 
         val markup = Utilities.makeInlineKeyboard(menuButtons, "cart")

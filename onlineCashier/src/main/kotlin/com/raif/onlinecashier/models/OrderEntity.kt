@@ -17,16 +17,19 @@ class OrderEntity(
     @Column(nullable = false)
     val chatId: Long = 0,
 
-    @OneToOne(cascade = [CascadeType.REMOVE])
-    val menuItem: MenuEntity? = null,
+    @ManyToOne(cascade = [])
+    val menuItem: MenuEntity = MenuEntity(),
     @Column(nullable = false)
     @Min(value = 1, message = "amount must be greater than 0")
-    val amount: Int = 0,
+    var amount: Int = 0,
 ) {
     constructor(chatId: Long, menuItem: MenuEntity, amount: Int) : this(0, chatId, menuItem, amount)
 }
 
 @Repository
-interface OrderEntityRepository : JpaRepository<OrderEntity, String> {
+interface OrderEntityRepository : JpaRepository<OrderEntity, Int> {
     fun findByChatId(chatId: Long, page: Pageable): Page<OrderEntity>
+    fun countByChatId(chatId: Long): Int
+    fun findByMenuItemId(orderId: Int): OrderEntity?
+    fun deleteByChatId(chatId: Long)
 }

@@ -3,8 +3,6 @@ package com.raif.onlinecashier.FSM
 import com.raif.onlinecashier.Constants
 import com.raif.onlinecashier.MyInlineButton
 import com.raif.onlinecashier.Utilities
-import org.json.JSONException
-import org.json.JSONObject
 import org.telegram.telegrambots.meta.api.objects.Update
 import kotlin.math.max
 import kotlin.math.min
@@ -13,9 +11,6 @@ class MenuState(
     private val stateController: StateController,
     private var page: Int,
 ) : State {
-    private fun getLength(): Int {
-        return 3
-    }
 
     override fun nextState(update: Update): State {
         if (update.hasCallbackQuery()) {
@@ -50,8 +45,10 @@ class MenuState(
 
                 "addToCart" -> {
                     //Add to order
-                    stateController.dataService.addOrderProduct(stateController.chatId, params[0].toString().toInt())
-                    stateController.answer(query.id, "Товар \"${params[0]}\" пока не успешно добавлен в корзину")
+                    val menuItemId = params[0].toString().toInt()
+                    stateController.dataService.addOrderItem(stateController.chatId, menuItemId, 1)
+                    val item = stateController.dataService.getMenuItem(menuItemId) ?: return this
+                    stateController.answer(query.id, "Товар \"${item.name}\" успешно добавлен в корзину")
                     return this
                 }
                 "empty" -> {
@@ -66,7 +63,7 @@ class MenuState(
 
 
     override fun show() {
-        val pageCount = getLength()
+        val pageCount = stateController.dataService.getMenuPageCount(stateController.chatId)
         page = max(1, page)
         page = min(page, pageCount)
 

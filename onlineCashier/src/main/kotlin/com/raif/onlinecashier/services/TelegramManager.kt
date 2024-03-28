@@ -7,8 +7,6 @@ import com.raif.onlinecashier.FSM.StateController
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 
 @Service
 class TelegramManager(
@@ -29,10 +27,7 @@ class TelegramManager(
             } catch(e: Throwable) {
                 states[chatId] = HomeState(stateController)
             }
-
             states[chatId]?.show()
-
-
         }
         if (update.hasCallbackQuery()) {
             val chatId = update.callbackQuery.message.chatId
@@ -50,7 +45,7 @@ class TelegramManager(
     }
 
     fun test() {
-        dataService.addOrderProduct(472209097, 1    )
+        dataService.addOrderItem(472209097, 1    , 1)
     }
 
 
