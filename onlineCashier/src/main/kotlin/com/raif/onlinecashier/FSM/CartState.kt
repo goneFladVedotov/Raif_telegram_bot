@@ -48,11 +48,10 @@ class CartState(
                     return this
                 }
                 "buy" -> {
-                    //TODO генрить куар
-                    // отправить пользователю и чекать оплату
-
-
-
+                    val amount = stateController.dataService.calcOrderPrice(stateController.chatId)
+                    val qr = stateController.dataService.createQr(amount, stateController.chatId)
+                    stateController.answer(query.id)
+                    return OrderDetailsState(stateController, qr?.id ?: -1)
                 }
                 "empty" -> {
                     stateController.answer(query.id)
@@ -74,8 +73,8 @@ class CartState(
         val text =
             "Ваша корзина (<code>$page/$pageCount</code>) :\n" +
                     "Нажмите на товар, чтобы удалить его из корзины."
-        val menu = stateController.dataService.getOrderItems(stateController.chatId, page - 1)
-        println(menu)
+        val menu = stateController.dataService.getOrderPage(stateController.chatId, page - 1)
+
         val menuButtons = mutableListOf<List<MyInlineButton>>()
         for (ent in menu) {
             menuButtons.add(
@@ -98,7 +97,8 @@ class CartState(
                 MyInlineButton(if (page < pageCount) "➡\uFE0F" else " ", "right")
             )
         )
-        menuButtons.add(listOf(MyInlineButton("Купить", "buy")))
+        val price = stateController.dataService.calcOrderPrice(stateController.chatId)
+        menuButtons.add(listOf(MyInlineButton("Купить\uD83D\uDED2($price Руб.)", "buy")))
         menuButtons.add(listOf(MyInlineButton("Выход↩\uFE0F", "exit")))
 
         val markup = Utilities.makeInlineKeyboard(menuButtons, "cart")

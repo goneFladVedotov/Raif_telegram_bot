@@ -71,7 +71,7 @@ class MenuState(
         val text =
             "Каталог товаров (<code>$page/$pageCount</code>) :\n" +
                     "Нажмите на товар, чтобы добавить его в корзину."
-        val menu = stateController.dataService.getMenuItems(stateController.chatId, page - 1)
+        val menu = stateController.dataService.getMenuPage(stateController.chatId, page - 1)
         val menuButtons = mutableListOf<List<MyInlineButton>>()
         for (ent in menu) {
             menuButtons.add(listOf(MyInlineButton("${ent.name} (${ent.price} руб)", "addToCart", listOf(ent.id, ent.name))))

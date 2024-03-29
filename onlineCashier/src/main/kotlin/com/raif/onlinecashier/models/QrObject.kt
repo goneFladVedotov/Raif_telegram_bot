@@ -1,6 +1,8 @@
 package com.raif.onlinecashier.models
 
 import jakarta.persistence.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -9,21 +11,22 @@ import org.springframework.stereotype.Repository
 @Table(name = "qrs")
 class QrObject(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    val id: String = "",
-    @Column(unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Int = 0,
     val qrId: String = "",
-    @Column(unique = true, nullable = false)
     val payload: String = "",
-    @Column(unique = true, nullable = false)
     val qrUrl: String = "",
-    @Column(nullable = false)
-    val qrStatus: String = "",
-) {
-    constructor(qrId: String, payload: String, qrUrl: String, qrStatus: String) :
-            this("", qrId, payload, qrUrl, qrStatus)
+    var qrStatus: String = "",
+    val relatedChatId: Long = 0,
+    val amount: Double = 0.0,
+
+    ) {
+    constructor(qrId: String, payload: String, qrUrl: String, qrStatus: String, relatedChatId: Long, amount: Double) :
+            this(0, qrId, payload, qrUrl, qrStatus, relatedChatId, amount)
 }
 
 @Repository
-interface QrObjectRepository : JpaRepository<QrObject, String> {
+interface QrObjectRepository : JpaRepository<QrObject, Int> {
+    fun findAllByQrStatus(qrStatus: String): List<QrObject>
+    fun findAllByRelatedChatId(chatId: Long, pageable: Pageable): Page<QrObject>
 }

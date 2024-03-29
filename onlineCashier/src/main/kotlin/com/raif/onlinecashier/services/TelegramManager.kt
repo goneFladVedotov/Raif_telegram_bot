@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 @Service
 class TelegramManager(
     private var telegramService: TelegramService,
-    private var dataService: DataService
+    private var dataService: DataService,
 ) {
 
     private var states: MutableMap<Long, State> = mutableMapOf()
@@ -20,6 +20,10 @@ class TelegramManager(
     @EventListener
     fun update(update: Update) {
         if (update.hasMessage()) {
+            if (update.message.text.lowercase() == "test") {
+                dataService.createQr(123.0, 472209097)
+                dataService.createQr(123.0, 472209097)
+            }
             val chatId = update.message.chatId
             val stateController = StateController(telegramService, dataService, chatId)
             try{
@@ -44,9 +48,6 @@ class TelegramManager(
         return
     }
 
-    fun test() {
-        dataService.addOrderItem(472209097, 1    , 1)
-    }
 
 
 }

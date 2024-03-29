@@ -56,15 +56,7 @@ class DataService(
     }
 
     fun clearCart(chatId: Long) {
-//        orderEntityRepository.deleteByChatId(chatId)
-        while (true) {
-            val pageable = PageRequest.of(0, 100, Sort.by("menuItem.name").ascending())
-            val pageResult = orderEntityRepository.findByChatId(chatId, pageable)
-            if (pageResult.isEmpty) break
-            for (item in pageResult) {
-                orderEntityRepository.deleteById(item.id)
-            }
-        }
+        orderEntityRepository.deleteByChatId(chatId)
     }
 
     fun getMenuPageCount(chatId: Long): Int {
@@ -79,15 +71,21 @@ class DataService(
         return maxOf((x + y - 1) / y, 1)
     }
 
-    fun getMenuItems(chatId: Long, page: Int): List<MenuEntity> {
+    fun getMenuPage(chatId: Long, page: Int): List<MenuEntity> {
         val pageable = PageRequest.of(page, Constants.ITEMS_ON_PAGE, Sort.by("name").ascending())
         val pageResult = menuEntityRepository.findByChatId(chatId, pageable)
         return pageResult.content
     }
 
-    fun getOrderItems(chatId: Long, page: Int): List<OrderEntity> {
+    fun getOrderPage(chatId: Long, page: Int): List<OrderEntity> {
         val pageable = PageRequest.of(page, Constants.ITEMS_ON_PAGE, Sort.by("menuItem.name").ascending())
         val pageResult = orderEntityRepository.findByChatId(chatId, pageable)
+        return pageResult.content
+    }
+
+    fun getQrPage(chatId: Long, page: Int): List<QrObject> {
+        val pageable = PageRequest.of(page, Constants.ITEMS_ON_PAGE, Sort.by("id").descending())
+        val pageResult = qrObjectRepository.findAllByRelatedChatId(chatId, pageable)
         return pageResult.content
     }
 
@@ -97,6 +95,53 @@ class DataService(
 
     fun getOrderItem(id: Int): OrderEntity? {
         return orderEntityRepository.findById(id).getOrNull()
+    }
+
+    fun getQrObject(id: Int): QrObject? {
+        return qrObjectRepository.findById(id).getOrNull()
+    }
+
+    fun createQr(amount: Double, chatId: Long, expDate: String = "+15m"): QrObject? {
+        val empty = QrObject()
+        qrObjectRepository.saveAndFlush(empty)
+        val response = khttp.post(
+            "${Constants.PAYMENT_API_URL}/qrs/dynamic",
+            json = mapOf(
+                "amount" to amount,
+                "order" to "${Constants.STATIC_QR_PREFIX}_${empty.id}",
+                "qrExpirationDate" to expDate
+            )
+        )
+        val data = try {
+            response.jsonObject
+        } catch (e: Exception) {
+            return null
+        }
+        val qrObject = QrObject(
+            empty.id,
+            data["qrId"].toString(),
+            data["payload"].toString(),
+            data["qrUrl"].toString(),
+            data["qrStatus"].toString(),
+            chatId,
+            amount
+        )
+        qrObjectRepository.saveAndFlush(qrObject)
+        logger.info("Qr ${qrObject.qrId}(${qrObject.id}, ${qrObject.amount} руб.) created")
+        return qrObject
+    }
+    fun calcOrderPrice(chatId: Long): Double {
+        var curSum = 0.0
+        var pageNum = 0
+        while (true) {
+            val page = getOrderPage(chatId, pageNum)
+            if (page.isEmpty()) break
+            for (order in page) {
+                curSum += order.menuItem.price * order.amount
+            }
+            pageNum += 1
+        }
+        return curSum
     }
 
 }

@@ -2,8 +2,7 @@ package com.raif.onlinecashier.FSM
 
 import com.raif.onlinecashier.MyInlineButton
 import com.raif.onlinecashier.Utilities
-import org.json.JSONException
-import org.json.JSONObject
+
 import org.telegram.telegrambots.meta.api.objects.Update
 
 class HomeState(
@@ -12,7 +11,7 @@ class HomeState(
     override fun nextState(update: Update): State {
         if (update.hasCallbackQuery()) {
             val query = update.callbackQuery
-            val (id, params) = Utilities.parseCallback(query, "homepage") ?: return this
+            val (id) = Utilities.parseCallback(query, "homepage") ?: return this
             when (id) {
                 "menu" -> {
                     stateController.answer(query.id)
@@ -21,6 +20,15 @@ class HomeState(
                 "cart" -> {
                     stateController.answer(query.id)
                     return CartState(stateController, 1)
+                }
+                "lastOrder" -> {
+                    stateController.answer(query.id)
+                    val page = stateController.dataService.getQrPage(stateController.chatId, 0)
+                    var idQr = -1
+                    if (page.isNotEmpty()) {
+                        idQr = page[0].id
+                    }
+                    return OrderDetailsState(stateController, idQr)
                 }
             }
         }
@@ -33,6 +41,7 @@ class HomeState(
         val markup = Utilities.makeInlineKeyboard(
             listOf(
                 listOf(MyInlineButton("Меню", "menu")),
+                listOf(MyInlineButton("Последний заказ", "lastOrder")),
                 listOf(MyInlineButton("Корзина", "cart")),
             ), "homepage"
         )

@@ -68,7 +68,7 @@ class MenuDeletionModeState(
         val text =
             "Каталог товаров (<code>$page/$pageCount</code>) :\n" +
                     "Нажмите на товар, чтобы <b><i><u>УДАЛИТЬ</u></i></b> его из списка товаров."
-        val menu = stateController.dataService.getMenuItems(stateController.chatId, page - 1)
+        val menu = stateController.dataService.getMenuPage(stateController.chatId, page - 1)
         val menuButtons = mutableListOf<List<MyInlineButton>>()
         for (ent in menu) {
             menuButtons.add(

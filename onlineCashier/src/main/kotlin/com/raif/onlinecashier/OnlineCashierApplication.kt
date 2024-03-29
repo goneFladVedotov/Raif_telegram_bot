@@ -5,10 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
 @SpringBootApplication
+@EnableScheduling
 class OnlineCashierApplication
 fun main(args: Array<String>) {
     runApplication<OnlineCashierApplication>(*args)
