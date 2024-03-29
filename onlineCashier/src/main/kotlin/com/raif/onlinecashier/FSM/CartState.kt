@@ -28,7 +28,6 @@ class CartState(
                 }
 
                 "deleteAll" -> {
-                    //TODO сделать отдельный стейт с подтверждением.
                     stateController.dataService.clearCart(stateController.chatId)
                     stateController.answer(query.id)
                     return CartState(stateController, 1)
@@ -41,10 +40,11 @@ class CartState(
 
                 "delete" -> {
                     //Add to order
-                    val orderId = params[0].toString().toInt()
-                    stateController.dataService.delOrderItem(orderId)
-                    val item = stateController.dataService.getOrderItem(orderId) ?: return this
-                    stateController.answer(query.id, "Товар \"${item.menuItem.name}\" успешно удален из корзины")
+                    val menuId = params[0].toString().toInt()
+                    println(menuId)
+                    stateController.dataService.delOrderItem(menuId)
+                    val item = stateController.dataService.getMenuItem(menuId) ?: return this
+                    stateController.answer(query.id, "Товар \"${item.name}\" успешно удален из корзины")
                     return this
                 }
                 "buy" -> {
@@ -82,7 +82,7 @@ class CartState(
                     MyInlineButton(
                         "${ent.menuItem.name} (${ent.amount}x${ent.menuItem.price} = ${ent.menuItem.price * ent.amount} руб)",
                         "delete",
-                        listOf(ent.menuItem.id)
+                        listOf(ent.menuItem.id) //TODO можно заменить на просто ent.id
                     )
                 )
             )

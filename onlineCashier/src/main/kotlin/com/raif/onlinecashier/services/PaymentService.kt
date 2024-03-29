@@ -19,7 +19,7 @@ class PaymentService(
             val response = khttp.get(
                 "${Constants.PAYMENT_API_URL}/qrs/${qr.qrId}"
             )
-            logger.info("${qr.qrId}(${qr.id}) looking = $response")
+            logger.debug("{}({}) looking = {}", qr.qrId, qr.id, response)
             val data = try {
                 response.jsonObject
             } catch (e: Exception) {

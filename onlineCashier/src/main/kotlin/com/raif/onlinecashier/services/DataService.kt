@@ -31,28 +31,28 @@ class DataService(
         menuEntityRepository.deleteById(id)
     }
 
-    fun addOrderItem(chatId: Long, id: Int, count: Int) {
-        var entity = orderEntityRepository.findByMenuItemId(id)
+    fun addOrderItem(chatId: Long, menuId: Int, count: Int) {
+        var entity = orderEntityRepository.findByMenuItemId(menuId)
         if (entity == null) {
             if (count < 0) return
-            entity = OrderEntity(chatId, MenuEntity(id), count)
+            entity = OrderEntity(chatId, MenuEntity(menuId), count)
             orderEntityRepository.saveAndFlush(entity)
-            logger.info("Add to [$chatId] order item ($id, $count)")
+            logger.info("Add to [$chatId] order item ($menuId, $count)")
             return
         }
         entity.amount += count
         if (entity.amount <= 0) {
             orderEntityRepository.deleteById(entity.id)
-            logger.info("Delete [$chatId, $id] ")
+            logger.info("Delete [$chatId, $menuId] ")
         } else {
 
             orderEntityRepository.saveAndFlush(entity)
-            logger.info("Update to [$chatId, $id] order ($count)")
+            logger.info("Update to [$chatId, $menuId] order ($count)")
         }
     }
 
-    fun delOrderItem(id: Int) {
-        addOrderItem(0, id, -1)
+    fun delOrderItem(menuId: Int) {
+        addOrderItem(0, menuId, -1)
     }
 
     fun clearCart(chatId: Long) {
