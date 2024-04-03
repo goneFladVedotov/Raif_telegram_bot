@@ -11,7 +11,10 @@ import org.springframework.transaction.annotation.Transactional
 class PaymentServiceImpl(
     private val paymentRepository: PaymentRepository
 ): PaymentService {
+
+    @Transactional
     override fun savePaymentInfo(paymentInfo: PaymentInfo) {
+        paymentRepository.findByQrId(paymentInfo.qrId)?:throw ResourceNotFoundException("payment info not found")
         paymentRepository.save(paymentInfo)
     }
 
@@ -20,7 +23,7 @@ class PaymentServiceImpl(
         val paymentInfoToUpdate = paymentRepository.findByQrId(qrId)?:
         throw ResourceNotFoundException("payment info not found")
         paymentInfoToUpdate.paymentStatus = paymentStatus
-        paymentRepository.save(paymentInfoToUpdate)
+        paymentRepository.saveAndFlush(paymentInfoToUpdate)
     }
 
     override fun getPaymentInfo(qrId: String): PaymentInfo {

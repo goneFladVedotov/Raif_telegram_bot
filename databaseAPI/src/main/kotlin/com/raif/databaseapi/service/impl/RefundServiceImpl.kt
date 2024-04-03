@@ -12,6 +12,7 @@ class RefundServiceImpl(
     private val refundRepository: RefundRepository
 ): RefundService {
     override fun saveRefundInfo(refundInfo: RefundInfo) {
+        refundRepository.findByRefundId(refundInfo.refundId)?:throw ResourceNotFoundException("refund info not found")
         refundRepository.save(refundInfo)
     }
 
@@ -20,7 +21,7 @@ class RefundServiceImpl(
         val refundInfoToUpdate = refundRepository.findByRefundId(refundId) ?:
         throw ResourceNotFoundException("refund info not found")
         refundInfoToUpdate.status = refundStatus
-        refundRepository.save(refundInfoToUpdate)
+        refundRepository.saveAndFlush(refundInfoToUpdate)
     }
 
     override fun getRefundInfo(refundId: String): RefundInfo {

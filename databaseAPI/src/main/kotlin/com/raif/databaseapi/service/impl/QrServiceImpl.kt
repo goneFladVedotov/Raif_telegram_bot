@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional
 class QrServiceImpl (
     private val qrRepository: QrRepository
 ): QrService {
+    @Transactional
     override fun saveQrInfo(qrInfo: QrInfo) {
+        qrRepository.findByQrId(qrInfo.qrId)?:throw ResourceNotFoundException("QrInfo not found")
         qrRepository.save(qrInfo)
     }
 
@@ -29,6 +31,6 @@ class QrServiceImpl (
         val qrInfoToUpdate = qrRepository.findByQrId(qrId)
         qrInfoToUpdate?:throw ResourceNotFoundException("QrInfo not found")
         qrInfoToUpdate.qrStatus = qrStatus
-        qrRepository.save(qrInfoToUpdate)
+        qrRepository.saveAndFlush(qrInfoToUpdate)
     }
 }
