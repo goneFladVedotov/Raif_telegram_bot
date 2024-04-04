@@ -4,7 +4,7 @@ import com.raif.paymentapi.domain.dto.ReceiptDto
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
-import raiffeisen.sbp.sdk.model.`in`.fiscal.ReceiptInfo
+import raiffeisen.sbp.sdk.model.fiscal.ReceiptInfo
 
 interface ReceiptController {
     fun saveSellReceipt(@Valid @RequestBody receiptDto: ReceiptDto): ResponseEntity<ReceiptInfo>

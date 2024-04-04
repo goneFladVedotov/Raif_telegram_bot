@@ -1,23 +1,21 @@
 package com.raif.paymentapi.service.impl
 
 import com.raif.paymentapi.domain.dto.ReceiptDto
-import com.raif.paymentapi.service.DatabaseApiClient
 import com.raif.paymentapi.service.ReceiptService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import raiffeisen.sbp.sdk.client.SbpClient
-import raiffeisen.sbp.sdk.model.`in`.fiscal.Receipt
-import raiffeisen.sbp.sdk.model.`in`.fiscal.ReceiptClient
-import raiffeisen.sbp.sdk.model.`in`.fiscal.ReceiptInfo
-import raiffeisen.sbp.sdk.model.`in`.fiscal.ReceiptItem
+import raiffeisen.sbp.sdk.model.fiscal.Receipt
+import raiffeisen.sbp.sdk.model.fiscal.ReceiptClient
+import raiffeisen.sbp.sdk.model.fiscal.ReceiptInfo
+import raiffeisen.sbp.sdk.model.fiscal.ReceiptItem
 
 @Service
 class ReceiptServiceImpl(
     @Value("\${raif.sbpMerchantId}")
     private val sbpMerchantId: String,
     @Value("\${raif.secretKey}")
-    private val secretKey: String,
-    private val databaseApiClient: DatabaseApiClient
+    private val secretKey: String
 ) : ReceiptService {
     override fun saveSellReceipt(receiptDto: ReceiptDto): ReceiptInfo {
         val sbpClient = SbpClient(SbpClient.FISCAL_TEST_URL, sbpMerchantId, secretKey)

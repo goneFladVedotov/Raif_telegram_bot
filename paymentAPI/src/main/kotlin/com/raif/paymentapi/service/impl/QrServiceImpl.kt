@@ -36,20 +36,17 @@ class QrServiceImpl(
     override fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val qrCode = QRDynamic(qrDynamicDto.order, qrDynamicDto.amount)
-        qrCode.account = qrDynamicDto.account
-        qrCode.additionalInfo = qrDynamicDto.additionalInfo
-        qrCode.paymentDetails = qrDynamicDto.paymentDetails
         qrCode.qrExpirationDate = qrDynamicDto.qrExpirationDate;
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
         databaseApiClient.save(
             PaymentInformation(
-                qrDynamicDto.additionalInfo ?: "",
+                "",
                 qrDynamicDto.amount,
                 ZonedDateTime.now(),
-                qrDynamicDto.currency ?: "",
+                "",
                 qrDynamicDto.order,
-                qrDynamicDto.paymentDetails ?: "",
+                "",
                 qrUrl.qrId,
                 sbpMerchantId,
                 ZonedDateTime.now(),
@@ -104,7 +101,8 @@ class QrServiceImpl(
         var size = qrQueue.size
         while (size > 0) {
             val current = qrQueue.poll()
-            val expirationDateTime = OffsetDateTime.parse(current.second, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
+            val expirationDateTime =
+                OffsetDateTime.parse(current.second, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             if (!expirationDateTime.isAfter(OffsetDateTime.now())) {
                 databaseApiClient.update(
                     "http://147.78.66.234:9091/database-api/v1/qrs/",

@@ -3,7 +3,7 @@ package com.raif.paymentapi.domain.dto
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.Length
 import org.springframework.validation.annotation.Validated
-import raiffeisen.sbp.sdk.model.`in`.fiscal.VatType
+import raiffeisen.sbp.sdk.model.fiscal.VatType
 import java.math.BigDecimal
 
 @Validated

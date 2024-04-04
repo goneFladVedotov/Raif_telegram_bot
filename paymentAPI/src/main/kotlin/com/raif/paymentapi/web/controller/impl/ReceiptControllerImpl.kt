@@ -9,7 +9,7 @@ import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import raiffeisen.sbp.sdk.model.`in`.fiscal.ReceiptInfo
+import raiffeisen.sbp.sdk.model.fiscal.ReceiptInfo
 
 @RestController
 @RequestMapping("/payment-api/v1/receipt")
