@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/payment-api/v1/subscription")
+@RequestMapping("/database-api/v1/subscription")
 @Tag(name = "Subscription Controller")
 class SubscriptionControllerImpl(
     private val subscriptionService: SubscriptionService,

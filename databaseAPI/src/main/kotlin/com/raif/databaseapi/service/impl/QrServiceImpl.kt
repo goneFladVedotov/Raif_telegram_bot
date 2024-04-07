@@ -33,6 +33,9 @@ class QrServiceImpl (
     override fun updateQrInfo(qrId: String, qrStatus: String) {
         val qrInfoToUpdate = qrRepository.findByQrId(qrId)
         qrInfoToUpdate?:throw ResourceNotFoundException("QrInfo not found")
+        if (qrInfoToUpdate.qrStatus == "SUBSCRIBED") {
+            return
+        }
         qrInfoToUpdate.qrStatus = qrStatus
         qrRepository.saveAndFlush(qrInfoToUpdate)
     }
