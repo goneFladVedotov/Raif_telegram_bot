@@ -3,6 +3,7 @@ package com.raif.paymentapi.service.impl
 import com.raif.paymentapi.domain.model.PaymentInformation
 import com.raif.paymentapi.domain.model.QrInformation
 import com.raif.paymentapi.domain.model.RefundInformation
+import com.raif.paymentapi.domain.model.SubscriptionInformation
 import com.raif.paymentapi.exception.DatabaseRequestException
 import com.raif.paymentapi.service.DatabaseApiClient
 import org.springframework.http.HttpStatusCode
@@ -41,6 +42,17 @@ class DatabaseApiClientImpl : DatabaseApiClient {
         )
         if (response.statusCode != HttpStatusCode.valueOf(200)) {
             throw DatabaseRequestException("bad status code: ${response.statusCode.value()}")
+        }
+    }
+
+    override fun save(subscriptionInformation: SubscriptionInformation) {
+        val response = restTemplate.postForEntity(
+            "http://147.78.66.234:9091/database-api/v1/subscription",
+            subscriptionInformation,
+            Any::class.java
+        )
+        if (response.statusCode != HttpStatusCode.valueOf(200)) {
+            throw DatabaseRequestException("bad request: ${response.statusCode.value()}")
         }
     }
 

@@ -2,6 +2,8 @@ package com.raif.paymentapi.service.impl
 
 import com.raif.paymentapi.domain.dto.SubscriptionDto
 import com.raif.paymentapi.domain.dto.SubscriptionPaymentDto
+import com.raif.paymentapi.domain.model.SubscriptionInformation
+import com.raif.paymentapi.service.DatabaseApiClient
 import com.raif.paymentapi.service.SubscriptionService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -13,6 +15,7 @@ import raiffeisen.sbp.sdk.model.out.SubscriptionPayment
 
 @Service
 class SubscriptionServiceImpl(
+    private val databaseApiClient: DatabaseApiClient,
     @Value("\${raif.sbpMerchantId}")
     private val sbpMerchantId: String,
     @Value("\${raif.secretKey}")
@@ -25,7 +28,18 @@ class SubscriptionServiceImpl(
         subscription.subscriptionPurpose = subscriptionDto.subscriptionPurpose
         subscription.sbpMerchantId = sbpMerchantId
         subscription.redirectUrl = subscriptionDto.redirectUrl
-        return sbpClient.createSubscriptionQR(subscription)
+        val subscriptionInfo = sbpClient.createSubscriptionQR(subscription)
+        databaseApiClient.save(
+            SubscriptionInformation(
+                subscriptionInfo.id,
+                subscriptionInfo.createDate,
+                subscriptionInfo.status.toString(),
+                subscriptionInfo.qr.id,
+                subscriptionInfo.qr.payload,
+                subscriptionInfo.qr.url
+            )
+        )
+        return subscriptionInfo
     }
 
     override fun getQrInfo(subscriptionId: String): SubscriptionInfo {
