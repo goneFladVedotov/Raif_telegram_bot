@@ -13,6 +13,11 @@ class DatabaseControllerAdvice {
         return ResponseEntity.badRequest().body(e.message)
     }
 
+    @ExceptionHandler(IllegalStateException::class)
+    fun handleIllegalState(e: IllegalStateException): ResponseEntity<*> {
+        return ResponseEntity.badRequest().body(e.message)
+    }
+
     @ExceptionHandler(Exception::class)
     fun handle(e: Exception): ResponseEntity<*> {
         e.printStackTrace()

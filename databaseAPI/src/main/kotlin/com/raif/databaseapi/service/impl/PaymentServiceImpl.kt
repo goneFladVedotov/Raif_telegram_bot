@@ -14,7 +14,9 @@ class PaymentServiceImpl(
 
     @Transactional
     override fun savePaymentInfo(paymentInfo: PaymentInfo) {
-        paymentRepository.findByQrId(paymentInfo.qrId)?:throw ResourceNotFoundException("payment info not found")
+        if (paymentRepository.findByQrId(paymentInfo.qrId) != null) {
+            throw IllegalStateException("payment info already exists")
+        }
         paymentRepository.save(paymentInfo)
     }
 

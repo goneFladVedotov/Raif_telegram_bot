@@ -6,13 +6,16 @@ import com.raif.databaseapi.exception.ResourceNotFoundException
 import com.raif.databaseapi.service.RefundService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.IllegalStateException
 
 @Service
 class RefundServiceImpl(
     private val refundRepository: RefundRepository
 ): RefundService {
     override fun saveRefundInfo(refundInfo: RefundInfo) {
-        refundRepository.findByRefundId(refundInfo.refundId)?:throw ResourceNotFoundException("refund info not found")
+        if (refundRepository.findByRefundId(refundInfo.refundId) != null) {
+            throw IllegalStateException("refund info already exists")
+        }
         refundRepository.save(refundInfo)
     }
 

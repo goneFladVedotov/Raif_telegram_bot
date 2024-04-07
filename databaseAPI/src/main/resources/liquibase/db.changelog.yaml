@@ -1,4 +1,8 @@
 databaseChangeLog:
-  - includeAll:
-      path: /changesets
-      relativeToChangelogFile: true
+  - changeSet:
+      id: 01-init-tables
+      author: vlad_fedotov
+      changes:
+        - sqlFile:
+            path: /changesets/01-init-tables.sql
+            relativeToChangelogFile: true

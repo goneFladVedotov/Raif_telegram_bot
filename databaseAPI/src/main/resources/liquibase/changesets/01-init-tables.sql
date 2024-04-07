@@ -5,7 +5,7 @@ set search_path to database;
 create table if not exists database.qr_info
 (
     id        bigserial primary key,
-    qr_id     varchar(255) not null,
+    qr_id     varchar(255) unique not null,
     qr_status varchar(255) not null,
     payload   varchar(255) not null,
     qr_url    varchar(255) not null
@@ -32,8 +32,18 @@ create table if not exists database.refund_info
     id              bigserial primary key,
     amount          decimal,
     order_info      varchar(255),
-    refund_id       varchar(255),
+    refund_id       varchar(255) unique,
     status          varchar(255),
     payment_details varchar(255),
     transaction_id  bigserial
 );
+
+create table if not exists database.subscription_info
+(
+    id              bigserial primary key,
+    subscription_id bigint,
+    create_date     varchar(255),
+    status          varchar(50),
+    qr_id           bigint,
+    foreign key(qr_id) references qr_info(id)
+)

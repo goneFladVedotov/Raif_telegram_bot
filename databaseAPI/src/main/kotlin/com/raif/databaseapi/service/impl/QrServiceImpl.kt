@@ -6,15 +6,18 @@ import com.raif.databaseapi.exception.ResourceNotFoundException
 import com.raif.databaseapi.service.QrService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.IllegalStateException
 
 @Service
 class QrServiceImpl (
     private val qrRepository: QrRepository
 ): QrService {
     @Transactional
-    override fun saveQrInfo(qrInfo: QrInfo) {
-        qrRepository.findByQrId(qrInfo.qrId)?:throw ResourceNotFoundException("QrInfo not found")
-        qrRepository.save(qrInfo)
+    override fun saveQrInfo(qrInfo: QrInfo): QrInfo {
+        if (qrRepository.findByQrId(qrInfo.qrId) != null) {
+            throw IllegalStateException("qr info already exists")
+        }
+        return qrRepository.save(qrInfo)
     }
 
     override fun getQrInfo(qrId: String): QrInfo {
