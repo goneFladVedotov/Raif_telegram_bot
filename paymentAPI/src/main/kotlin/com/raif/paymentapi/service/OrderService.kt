@@ -1,10 +1,9 @@
 package com.raif.paymentapi.service
 
 import com.raif.paymentapi.domain.dto.OrderDto
-import com.raif.paymentapi.domain.dto.RefundDto
+import raiffeisen.sbp.sdk.model.`in`.OrderInfo
 
 interface OrderService {
-    fun makeOrder(orderDto: OrderDto)
+    fun makeOrder(orderDto: OrderDto): OrderInfo
     fun cancelOrder(orderId: String)
-    fun refundOrder(refundDto: RefundDto)
 }

@@ -59,7 +59,7 @@ class RefundServiceImpl(
             val refundStatus = getRefundStatus(refundId)
             if (refundStatus.refundStatus != "IN_PROGRESS") {
                 databaseApiClient.update(
-                    "http://147.78.66.234:9091/database-api/v1/refund/",
+                    "/database-api/v1/refund/",
                     refundId,
                     refundStatus.refundStatus
                 )

@@ -28,10 +28,10 @@ class QrServiceImpl(
     @Value("\${raif.sbpMerchantId}")
     private val sbpMerchantId: String,
     @Value("\${raif.secretKey}")
-    private val secretKey: String
+    private val secretKey: String,
+    private val databaseApiClient: DatabaseApiClient
 ) : QrService {
     private val qrQueue: BlockingQueue<Pair<String, String>> = ArrayBlockingQueue(10)
-    private val databaseApiClient: DatabaseApiClient = DatabaseApiClientImpl()
 
     override fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
@@ -105,7 +105,7 @@ class QrServiceImpl(
                 OffsetDateTime.parse(current.second, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             if (!expirationDateTime.isAfter(OffsetDateTime.now())) {
                 databaseApiClient.update(
-                    "http://147.78.66.234:9091/database-api/v1/qrs/",
+                    "/database-api/v1/qrs/",
                     current.first,
                     "EXPIRED"
                 )

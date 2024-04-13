@@ -2,6 +2,7 @@ package com.raif.paymentapi.service.impl
 
 import com.raif.paymentapi.domain.dto.SubscriptionDto
 import com.raif.paymentapi.domain.dto.SubscriptionPaymentDto
+import com.raif.paymentapi.domain.model.PaymentInformation
 import com.raif.paymentapi.domain.model.SubscriptionInformation
 import com.raif.paymentapi.service.DatabaseApiClient
 import com.raif.paymentapi.service.SubscriptionService
@@ -12,6 +13,7 @@ import raiffeisen.sbp.sdk.model.`in`.SubscriptionInfo
 import raiffeisen.sbp.sdk.model.`in`.SubscriptionPaymentResponse
 import raiffeisen.sbp.sdk.model.out.Subscription
 import raiffeisen.sbp.sdk.model.out.SubscriptionPayment
+import java.time.ZonedDateTime
 
 @Service
 class SubscriptionServiceImpl(
@@ -56,7 +58,22 @@ class SubscriptionServiceImpl(
         subscriptionPayment.order = dto.order
         subscriptionPayment.currency = dto.currency?:"RUB"
 
-        return sbpClient.paySubscription(subscriptionId, subscriptionPayment)
+        val result = sbpClient.paySubscription(subscriptionId, subscriptionPayment)
+        databaseApiClient.save(
+            PaymentInformation(
+                result.additionalInfo,
+                result.amount,
+                ZonedDateTime.now(),
+                result.currency,
+                result.order,
+                result.paymentStatus,
+                result.qrId,
+                sbpMerchantId,
+                ZonedDateTime.now(),
+                0L
+            )
+        )
+        return result
     }
 
     override fun getSubscriptionPaymentInfo(subscriptionId: String, order: String): SubscriptionPaymentResponse {
