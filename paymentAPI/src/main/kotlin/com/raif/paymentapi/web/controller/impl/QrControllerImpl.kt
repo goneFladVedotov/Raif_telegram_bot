@@ -27,7 +27,7 @@ class QrControllerImpl(
         return ResponseEntity.ok(qrService.registerDynamicQr(qrDynamicDto))
     }
 
-    @PostMapping("/static")
+    /*@PostMapping("/static")
     @Operation(summary = "Создание статического QR")
     override fun registerStaticQr(@Validated @RequestBody qrStaticDto: QrStaticDto): ResponseEntity<QRUrl> {
         return ResponseEntity.ok(qrService.registerStaticQr(qrStaticDto))
@@ -37,7 +37,7 @@ class QrControllerImpl(
     @Operation(summary = "Создание кассовой ссылки СБП")
     override fun registerVariableQr(@Validated @RequestBody qrVariableDto: QrVariableDto): ResponseEntity<QRUrl> {
         return ResponseEntity.ok(qrService.registerVariableQr(qrVariableDto))
-    }
+    }*/
 
     @GetMapping("/{id}")
     @Operation(summary = "Получение информации о QR")

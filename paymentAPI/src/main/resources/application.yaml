@@ -9,7 +9,7 @@ spring:
 
 http:
   address:
-    database: http://147.78.66.234:9091
+    database: "http://147.78.66.234:9091"
 
 raif:
   sbpMerchantId: "MA622976"

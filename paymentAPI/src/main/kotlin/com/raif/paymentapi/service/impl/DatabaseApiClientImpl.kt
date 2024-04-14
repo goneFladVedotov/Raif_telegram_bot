@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate
 
 @Service
 class DatabaseApiClientImpl(
-    @Value("\${http.address.database")
+    @Value("\${http.address.database}")
     private val address: String
 ) : DatabaseApiClient {
     private val restTemplate: RestTemplate = RestTemplate()
