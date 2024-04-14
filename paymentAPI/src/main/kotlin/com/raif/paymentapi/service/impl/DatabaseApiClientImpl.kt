@@ -20,7 +20,6 @@ class DatabaseApiClientImpl(
     private val savePaymentLock: Any = Any()
     private val saveSubscriptionLock: Any = Any()
     private val saveOrderLock = Any()
-    private val updateLock: Any = Any()
 
     override fun save(qrInformation: QrInformation) {
         synchronized(saveQrLock) {
@@ -86,11 +85,9 @@ class DatabaseApiClientImpl(
     }
 
     override fun update(url: String, id: String, status: String) {
-        synchronized(updateLock) {
-            restTemplate.put(
-                address + url + id,
-                status
-            )
-        }
+        restTemplate.put(
+            address + url + id,
+            status
+        )
     }
 }
