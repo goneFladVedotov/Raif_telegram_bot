@@ -13,7 +13,7 @@
 
 ![img_1.png](img_1.png)
 
-Создание третьей хуйни: http://localhost:8081/payment-api/v1/qrs/variable
+Создание : http://localhost:8081/payment-api/v1/qrs/variable
 
 Тело запроса:
 
