@@ -6,7 +6,8 @@ data class RefundInformation(
     val amount: BigDecimal,
     val order: String,
     val refundId: String,
-    val paymentDetails: String?,
+    val status: String,
+    val paymentDetails: String,
     val transactionId: Long
 ) {
 }

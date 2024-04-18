@@ -1,8 +1,6 @@
 package com.raif.paymentapi.web.controlleradvice.impl
 
 import com.raif.paymentapi.web.controlleradvice.SbpClientControllerAdvice
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -23,10 +21,10 @@ class SbpClientControllerAdviceImpl: SbpClientControllerAdvice {
         return ResponseEntity.badRequest().body(e.message)
     }
 
-/*    @ExceptionHandler(ContractViolationException::class)
+    @ExceptionHandler(ContractViolationException::class)
     override fun handleContractViolation(e: ContractViolationException): ResponseEntity<*> {
-        return ResponseEntity.badRequest().body(e.message + " lox")
-    }*/
+        return ResponseEntity.badRequest().body(e.message)
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     override fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException): ResponseEntity<*> {
@@ -34,7 +32,7 @@ class SbpClientControllerAdviceImpl: SbpClientControllerAdvice {
     }
 
     @ExceptionHandler(Exception::class)
-    override fun handle(e: Exception): ResponseEntity<*> {
+    override fun handleException(e: Exception): ResponseEntity<*> {
         e.printStackTrace()
         return ResponseEntity.internalServerError().body(e.message)
     }
