@@ -10,12 +10,23 @@ class UpdateScheduler(
     private val qrCodeService: QRCodeService,
     private val orderService: OrderService,
     private val smartBotProService: SmartBotProService,
-    private val botobotService: BotobotService
+    private val botobotService: BotobotService,
+    private val receiptService: ReceiptService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-    @Scheduled(initialDelay = 1000L, fixedDelay = 10000L)
+    @Scheduled(initialDelay = 1000L, fixedDelay = 1500L)
     fun updateOrderStatus() {
+        var needToUpdate: Boolean = false
+        for (order: Order in orderService.getAll()) {
+            if (order.status == "NEW") {
+                needToUpdate = true
+            }
+        }
+        if (!needToUpdate) {
+//            logger.info("No need for update")
+            return
+        }
         logger.info("updateOrderStatus")
         qrCodeService.updateAll()
         val orderList: List<Order> = orderService.getAll()
@@ -25,9 +36,11 @@ class UpdateScheduler(
                 val newOrder: Order = order.copy(status = newStatus)
                 if (newStatus == "PAID" && order.type == "smartbotpro") {
                     smartBotProService.orderPaid(newOrder)
+                    receiptService.createSellReceipt(newOrder)
                 }
                 if (newStatus == "PAID" && order.type == "botobot") {
                     botobotService.paidOrder(newOrder.id)
+                    receiptService.createSellReceipt(newOrder)
                 }
 
                 orderService.createOrder(newOrder)

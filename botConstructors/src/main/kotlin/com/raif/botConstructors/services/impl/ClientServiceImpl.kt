@@ -1,12 +1,11 @@
 package com.raif.botConstructors.services.impl
 
 import com.raif.botConstructors.models.Client
-import com.raif.botConstructors.models.Order
 import com.raif.botConstructors.services.ClientService
 import org.springframework.stereotype.Service
 
 @Service
-class ClientServiceImpl() : ClientService {
+class ClientServiceImpl : ClientService {
     val clientMap: MutableMap<String, Client> = mutableMapOf()
     override fun createClient(client: Client) {
         clientMap[client.id] = client

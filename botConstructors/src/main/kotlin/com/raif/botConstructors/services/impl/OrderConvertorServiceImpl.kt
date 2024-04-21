@@ -30,13 +30,13 @@ class OrderConvertorServiceImpl(
         val mobile = params.getFirst("mobile")
         val email = params.getFirst("email")
 
-        val goods = params.get("goods[0][id]")?.mapIndexed { index, id ->
-            val article = params.get("goods[$index][article]")?.get(0) ?: ""
-            val title = params.get("goods[$index][title]")?.get(0) ?: ""
-            val count = params.get("goods[$index][count]")?.get(0)?.toFloat()?.toInt() ?: 0
-            val price = params.get("goods[$index][price]")?.get(0)?.toFloat() ?: 0f
-            val discount = params.get("goods[$index][discount]")?.get(0)?.toFloat() ?: 0f
-            val total = params.get("goods[$index][total]")?.get(0)?.toFloat() ?: 0f
+        val goods = params["goods[0][id]"]?.mapIndexed { index, id ->
+            val article = params["goods[$index][article]"]?.get(0) ?: ""
+            val title = params["goods[$index][title]"]?.get(0) ?: ""
+            val count = params["goods[$index][count]"]?.get(0)?.toFloat()?.toInt() ?: 0
+            val price = params["goods[$index][price]"]?.get(0)?.toFloat() ?: 0f
+            val discount = params["goods[$index][discount]"]?.get(0)?.toFloat() ?: 0f
+            val total = params["goods[$index][total]"]?.get(0)?.toFloat() ?: 0f
             BotobotOrderDto.GoodDto(id.toInt(), article, title, count, price, discount, total)
         } ?: emptyList()
 
@@ -57,7 +57,7 @@ class OrderConvertorServiceImpl(
         )
     }
     override fun convertBotobotOrderDtoToOrder(order: BotobotOrderDto): Order {
-        val client: Client = Client(order.user_chat_id, "botobot", order.email ?: "", order.recipient, {})
+        val client = Client(order.user_chat_id, "botobot", order.email ?: "", order.recipient, {})
         clientService.createClient(client)
 
         val amount = order.cost_total

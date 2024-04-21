@@ -7,6 +7,7 @@ import com.raif.botConstructors.models.dto.RefundDto
 import com.raif.botConstructors.models.dto.ShopbackDataSmartbotproDto
 import com.raif.botConstructors.services.*
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.UrlResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,6 +16,12 @@ import java.math.BigDecimal
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.util.MultiValueMap
+import org.springframework.ui.Model
+import org.springframework.util.FileCopyUtils
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RestController
+import java.nio.charset.StandardCharsets
 
 @RestController
 @RequestMapping("/")
@@ -24,7 +31,8 @@ class ApiController(
     private val clientService: ClientService,
     private val smartBotProService: SmartBotProService,
     private val botobotService: BotobotService,
-    private val orderConvertorService: OrderConvertorService
+    private val orderConvertorService: OrderConvertorService,
+    private val receiptService: ReceiptService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -57,24 +65,25 @@ class ApiController(
         orderService.createOrder(order)
     }
 
-    @GetMapping("/bot-constructors/v1/order/qr/botobot/")
-    private fun getOrderQR(@RequestParam id: String): Any { //ResponseEntity<UrlResource> or String
-        logger.info("/bot-constructors/v1/order/qr/botobot/")
+    @GetMapping("/bot-constructors/v1/order/pay/{type}/{id}", produces = ["text/html"])
+    fun orderPay(
+        @PathVariable("type") type: String,
+        @PathVariable("type") id: String
+    ): String {
+        logger.info("/bot-constructors/v1/order/pay/$type/$id")
         try {
-            val orderId = "botobot$id"
-            val order = orderService.getOrder(orderId)
+            val orderId = type + id
+            val order: Order = orderService.getOrder(orderId)
             val qr: QR = qrCodeService.getQR(order.qrId)
-            val resource = UrlResource(qr.qrUrl)
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.IMAGE_JPEG
-            headers.contentLength = resource.contentLength()
-            return ResponseEntity.ok()
-                .headers(headers)
-                .body(resource)
+            val qrUrl = qr.qrUrl
+            val resource = ClassPathResource("templates/pay.html")
+            var content = String(FileCopyUtils.copyToByteArray(resource.inputStream), StandardCharsets.UTF_8)
+            content = content.replace("https://via.placeholder.com/400", qrUrl)
+            content = content.replace("order_id", "№$id")
+            return content
         } catch (e: Exception) {
-            return ResponseEntity.ok("${e.message} Please reload page or try later")
+            return "Failed to get order"
         }
-
     }
 
     @PostMapping("/bot-constructors/v1/order/create/smartbotpro/")
@@ -146,6 +155,7 @@ class ApiController(
         } else if (type == "botobot") {
             botobotService.updateOrderStatus(id, "50") // 50 — оформлен возврат
         }
+        receiptService.createRefundReceipt(order, refundDto);
         return ResponseEntity.ok("SUCCESS")
     }
 
