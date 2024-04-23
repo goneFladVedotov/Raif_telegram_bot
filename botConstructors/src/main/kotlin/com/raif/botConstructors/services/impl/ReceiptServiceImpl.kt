@@ -30,7 +30,7 @@ class ReceiptServiceImpl(private val restTemplate: RestTemplate): ReceiptService
                     vatType = purchaseItem.vatType
                 )
             }.toTypedArray()
-            val receiptNumber: String = order.id + "refund"
+            val receiptNumber: String = order.type + order.id + "refund"
             val receiptDto =
                 ReceiptDto(receiptNumber, order.client.email, items, refundDto.amount)
             val headers = HttpHeaders()
@@ -57,7 +57,7 @@ class ReceiptServiceImpl(private val restTemplate: RestTemplate): ReceiptService
                     vatType = purchaseItem.vatType
                 )
             }.toTypedArray()
-            val receiptNumber: String = order.id + "sell"
+            val receiptNumber: String = order.type + order.id
             val receiptDto =
                 ReceiptDto(receiptNumber, order.client.email, items, BigDecimal.valueOf(order.amount))
             logger.info("receiptDto=$receiptDto")

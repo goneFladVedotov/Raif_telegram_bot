@@ -38,6 +38,7 @@ class BotobotServiceImpl(
     override fun paidOrder(id: String) {
         val method = "paidOrder"
         logger.info("BotobotService $method id=$id")
+        updateOrderStatus(id, "50") // 50 — оформлен возврат
         val url = "https://www.botobot.ru/api/v1/$method/${botobotToken}"
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED

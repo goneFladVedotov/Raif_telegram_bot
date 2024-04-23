@@ -59,16 +59,33 @@ class ApiController(
     fun createOrderBotobot(@RequestParam params: MultiValueMap<String, String>) {
         logger.info("/bot-constructors/v1/order/create/botobot/")
         logger.info("Received POST request with parameters: $params")
-        val botobotOrderDto = orderConvertorService.toBotobotOrderDto(params)
-        val order: Order = orderConvertorService.convertBotobotOrderDtoToOrder(botobotOrderDto)
-        logger.info("order=$order")
-        orderService.createOrder(order)
+        val status = params["status"]?.get(0)
+        logger.info("Order status=$status")
+        if (status == "10") { // Ожидает обработки
+            val botobotOrderDto = orderConvertorService.toBotobotOrderDto(params)
+            val order: Order = orderConvertorService.convertBotobotOrderDtoToOrder(botobotOrderDto)
+            logger.info("order=$order")
+            orderService.createOrder(order)
+        }
+        if (status == "50") { //оформлен возврат
+            logger.info("Do refund from Botobot Info")
+            try {
+                val botobotOrderDto = orderConvertorService.toBotobotOrderDto(params)
+                val orderId = "botobot${botobotOrderDto.id}"
+                val order = orderService.getOrder(orderId)
+                val refundDto = RefundDto(orderId, orderId, BigDecimal(order.amount), "full refund from botobot", null)
+                qrCodeService.refund(refundDto)
+                receiptService.createRefundReceipt(order, refundDto)
+            } catch (e: Exception) {
+                logger.error(e.message)
+            }
+        }
     }
 
     @GetMapping("/bot-constructors/v1/order/pay/{type}/{id}", produces = ["text/html"])
     fun orderPay(
         @PathVariable("type") type: String,
-        @PathVariable("type") id: String
+        @PathVariable("id") id: String
     ): String {
         logger.info("/bot-constructors/v1/order/pay/$type/$id")
         try {
@@ -82,7 +99,7 @@ class ApiController(
             content = content.replace("order_id", "№$id")
             return content
         } catch (e: Exception) {
-            return "Failed to get order"
+            return "Failed to get order ${e.message}"
         }
     }
 
