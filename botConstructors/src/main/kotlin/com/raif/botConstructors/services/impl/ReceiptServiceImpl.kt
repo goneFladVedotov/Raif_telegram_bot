@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import org.springframework.web.client.getForObject
 import java.math.BigDecimal
 
 @Service
@@ -71,5 +72,23 @@ class ReceiptServiceImpl(private val restTemplate: RestTemplate): ReceiptService
         } catch (e: Exception) {
             logger.error("Error during sell receipt: " + e.message)
         }
+    }
+
+    override fun getRefundOfd(id: String): String {
+        logger.info("getRefundOfd $id")
+        val url = "http://147.78.66.234:8081/payment-api/v1/receipt/refund/$id"
+        val response: Map<String, Any> = restTemplate.getForObject(url)
+        logger.info("response: $response")
+        val ofdUrl = response["ofdUrl"]?.toString() ?: throw IllegalStateException("Field 'ofdUrl' is null")
+        return ofdUrl
+    }
+
+    override fun getSellOfd(id: String): String {
+        logger.info("getSellOfd $id")
+        val url = "http://147.78.66.234:8081/payment-api/v1/receipt/sell/$id"
+        val response: Map<String, Any> = restTemplate.getForObject(url)
+        logger.info("response: $response")
+        val ofdUrl = response["ofdUrl"]?.toString() ?: throw IllegalStateException("Field 'ofdUrl' is null")
+        return ofdUrl
     }
 }

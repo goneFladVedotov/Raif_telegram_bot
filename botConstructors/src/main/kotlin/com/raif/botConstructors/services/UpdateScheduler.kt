@@ -35,12 +35,12 @@ class UpdateScheduler(
             if (order.status != newStatus) {
                 val newOrder: Order = order.copy(status = newStatus)
                 if (newStatus == "PAID" && order.type == "smartbotpro") {
-                    smartBotProService.orderPaid(newOrder)
                     receiptService.createSellReceipt(newOrder)
+                    smartBotProService.orderPaid(newOrder)
                 }
                 if (newStatus == "PAID" && order.type == "botobot") {
-                    botobotService.paidOrder(newOrder.id)
                     receiptService.createSellReceipt(newOrder)
+                    botobotService.paidOrder(newOrder.id)
                 }
 
                 orderService.createOrder(newOrder)

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.TimeUnit
 
 @RestController
 @RequestMapping("/")
@@ -82,6 +83,41 @@ class ApiController(
         }
     }
 
+    @GetMapping("/bot-constructors/v1/receipt/{type}/{id}", produces = ["text/html"])
+    fun receipt(
+        @PathVariable("type") type: String,
+        @PathVariable("id") id: String
+    ): String {
+        logger.info("/bot-constructors/v1/receipt/$type/$id")
+        try {
+            var recieptUrl: String
+            var count = 0;
+            while (true) {
+                try {
+                    val url = receiptService.getSellOfd(type + id);
+                    recieptUrl = url
+                    break
+                } catch (e: Exception) {
+                    logger.info("Error during odf url")
+                }
+                count += 1
+                if (count > 10) {
+                    throw Exception("Can not get ofd url")
+                }
+                try {
+                    TimeUnit.MILLISECONDS.sleep(300)
+                } catch (sleepException: InterruptedException) {
+                    println("Error during sleep: ${sleepException.message}")
+                }
+            }
+            val resource = ClassPathResource("templates/redirect.html")
+            var content = String(FileCopyUtils.copyToByteArray(resource.inputStream), StandardCharsets.UTF_8)
+            content = content.replace("https://example.com", recieptUrl)
+            return content
+        } catch (e: Exception) {
+            return "Fail: ${e.message}"
+        }
+    }
     @GetMapping("/bot-constructors/v1/order/pay/{type}/{id}", produces = ["text/html"])
     fun orderPay(
         @PathVariable("type") type: String,
@@ -92,15 +128,25 @@ class ApiController(
             val orderId = type + id
             val order: Order = orderService.getOrder(orderId)
             val qr: QR = qrCodeService.getQR(order.qrId)
-            val qrUrl = qr.qrUrl
-            val resource = ClassPathResource("templates/pay.html")
-            var content = String(FileCopyUtils.copyToByteArray(resource.inputStream), StandardCharsets.UTF_8)
-            content = content.replace("https://via.placeholder.com/400", qrUrl)
-            content = content.replace("order_id", "№$id")
-            return content
+            logger.info("status=${qr.qrStatus}")
+            if (qr.qrStatus == "NEW") {
+                val resource = ClassPathResource("templates/pay.html")
+                var content = String(FileCopyUtils.copyToByteArray(resource.inputStream), StandardCharsets.UTF_8)
+                content = content.replace("qrUrl", qr.qrUrl)
+                content = content.replace("order_id", id)
+                content = content.replace("payload", qr.payload)
+                return content
+            } else if (qr.qrStatus == "PAID") {
+                val resource = ClassPathResource("templates/paid.html")
+                var content = String(FileCopyUtils.copyToByteArray(resource.inputStream), StandardCharsets.UTF_8)
+                content = content.replace("order_id", id)
+                content = content.replace("reciept_link", "http://147.78.66.234/bot-constructors/v1/receipt/$type/$id")
+                return content
+            }
         } catch (e: Exception) {
-            return "Failed to get order ${e.message}"
+            return "Failed to get order: ${e.message}"
         }
+        return "Error"
     }
 
     @PostMapping("/bot-constructors/v1/order/create/smartbotpro/")

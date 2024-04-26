@@ -6,4 +6,7 @@ interface ReceiptService {
     fun createSellReceipt(order: Order)
 
     fun createRefundReceipt(order: Order, refundDto: RefundDto)
+    fun getRefundOfd(id: String): String
+    fun getSellOfd(id: String): String
+
 }
