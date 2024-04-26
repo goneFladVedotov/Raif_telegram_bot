@@ -33,7 +33,8 @@ class ApiController(
     private val smartBotProService: SmartBotProService,
     private val botobotService: BotobotService,
     private val orderConvertorService: OrderConvertorService,
-    private val receiptService: ReceiptService
+    private val receiptService: ReceiptService,
+    private val refundService: RefundService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -70,13 +71,12 @@ class ApiController(
         }
         if (status == "50") { //оформлен возврат
             logger.info("Do refund from Botobot Info")
+
             try {
                 val botobotOrderDto = orderConvertorService.toBotobotOrderDto(params)
                 val orderId = "botobot${botobotOrderDto.id}"
                 val order = orderService.getOrder(orderId)
-                val refundDto = RefundDto(orderId, orderId, BigDecimal(order.amount), "full refund from botobot", null)
-                qrCodeService.refund(refundDto)
-                receiptService.createRefundReceipt(order, refundDto)
+                refundService.refund(order, BigDecimal(order.amount), "full refund from botobot")
             } catch (e: Exception) {
                 logger.error(e.message)
             }
@@ -211,14 +211,6 @@ class ApiController(
         logger.info("/bot-constructors/v1/order/refund/$type/")
         val orderId = type + id
         val order = orderService.getOrder(orderId)
-        val refundDto = RefundDto(orderId, refundId, amount, details, null)
-        qrCodeService.refund(refundDto)
-        if (type == "smartbotpro") {
-            smartBotProService.orderRefund(order, refundDto)
-        } else if (type == "botobot") {
-            botobotService.updateOrderStatus(id, "50") // 50 — оформлен возврат
-        }
-        receiptService.createRefundReceipt(order, refundDto);
         return ResponseEntity.ok("SUCCESS")
     }
 
