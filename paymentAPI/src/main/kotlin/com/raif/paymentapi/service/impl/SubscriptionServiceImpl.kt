@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import raiffeisen.sbp.sdk.client.SbpClient
 import raiffeisen.sbp.sdk.model.`in`.SubscriptionInfo
 import raiffeisen.sbp.sdk.model.`in`.SubscriptionPaymentResponse
+import raiffeisen.sbp.sdk.model.`in`.SubscriptionStatus
 import raiffeisen.sbp.sdk.model.out.Subscription
 import raiffeisen.sbp.sdk.model.out.SubscriptionPayment
 import java.time.ZonedDateTime
@@ -47,6 +48,13 @@ class SubscriptionServiceImpl(
     override fun getQrInfo(subscriptionId: String): SubscriptionInfo {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         return sbpClient.getSubscriptionInfo(subscriptionId)
+    }
+
+    override fun getSubscriptionStatus(subscriptionId: String): SubscriptionStatus {
+        val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
+        val result = sbpClient.getSubscriptionInfo(subscriptionId)
+        databaseApiClient.updateStatus("/database-api/v1/subscription/", result.id, result.status.toString())
+        return result.status
     }
 
     override fun paySubscription(subscriptionId: String, dto: SubscriptionPaymentDto): SubscriptionPaymentResponse {

@@ -35,6 +35,12 @@ class SubscriptionControllerImpl(
         return ResponseEntity.ok(subscriptionService.getQrInfo(subscriptionId))
     }
 
+    @GetMapping("/status/{subscriptionId}")
+    @Operation(summary = "Получение статуса подписки")
+    override fun getSubscriptionStatus(@PathVariable subscriptionId: String): ResponseEntity<String> {
+        return ResponseEntity.ok(subscriptionService.getSubscriptionStatus(subscriptionId).toString())
+    }
+
     @PostMapping("/pay/{subscriptionId}")
     @Operation(summary = "Оплата по подписке")
     override fun paySubscription(
