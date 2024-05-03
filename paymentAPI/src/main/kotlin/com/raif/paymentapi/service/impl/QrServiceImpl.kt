@@ -104,7 +104,7 @@ class QrServiceImpl(
             val expirationDateTime =
                 OffsetDateTime.parse(current.second, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             if (!expirationDateTime.isAfter(OffsetDateTime.now())) {
-                databaseApiClient.update(
+                databaseApiClient.updateStatus(
                     "/database-api/v1/qrs/",
                     current.first,
                     "EXPIRED"

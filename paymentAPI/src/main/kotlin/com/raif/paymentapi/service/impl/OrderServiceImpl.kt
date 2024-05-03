@@ -46,6 +46,6 @@ class OrderServiceImpl(
     override fun cancelOrder(orderId: String) {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         sbpClient.orderCancellation(OrderId(orderId))
-        databaseApiClient.update("/database-api/v1/order", orderId, "CANCELLED")
+        databaseApiClient.updateStatus("/database-api/v1/order", orderId, "CANCELLED")
     }
 }
