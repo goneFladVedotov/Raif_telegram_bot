@@ -9,6 +9,7 @@ import raiffeisen.sbp.sdk.model.`in`.SubscriptionPaymentResponse
 interface SubscriptionController {
     fun createQr(subscriptionDto: SubscriptionDto): ResponseEntity<SubscriptionInfo>
     fun getQrInfo(subscriptionId: String): ResponseEntity<SubscriptionInfo>
+    fun getSubscriptionStatus(subscriptionId: String): ResponseEntity<String>
     fun paySubscription(subscriptionId: String, dto: SubscriptionPaymentDto): ResponseEntity<SubscriptionPaymentResponse>
     fun getSubscriptionPaymentInfo(subscriptionId: String, order: String): ResponseEntity<SubscriptionPaymentResponse>
 }

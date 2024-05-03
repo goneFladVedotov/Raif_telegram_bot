@@ -58,7 +58,7 @@ class RefundServiceImpl(
         for (refundId in refundIdList) {
             val refundStatus = getRefundStatus(refundId)
             if (refundStatus.refundStatus != "IN_PROGRESS") {
-                databaseApiClient.update(
+                databaseApiClient.updateStatus(
                     "/database-api/v1/refund/",
                     refundId,
                     refundStatus.refundStatus

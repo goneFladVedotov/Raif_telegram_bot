@@ -8,5 +8,5 @@ interface DatabaseApiClient {
     fun save(paymentInformation: PaymentInformation)
     fun save(subscriptionInformation: SubscriptionInformation)
     fun save(orderInformation: OrderInformation)
-    fun update(url: String, id: String, status: String)
+    fun updateStatus(url: String, id: String, status: String)
 }

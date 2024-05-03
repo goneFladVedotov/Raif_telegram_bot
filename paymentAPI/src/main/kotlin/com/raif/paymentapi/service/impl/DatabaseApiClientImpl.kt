@@ -84,7 +84,7 @@ class DatabaseApiClientImpl(
         }
     }
 
-    override fun update(url: String, id: String, status: String) {
+    override fun updateStatus(url: String, id: String, status: String) {
         restTemplate.put(
             address + url + id,
             status

@@ -25,13 +25,13 @@ class NotificationServiceImpl(
 
     override fun handleCallback(notificationString: String) {
         val paymentNotification: PaymentNotification = SbpUtil.parseNotification(notificationString)
-        databaseApiClient.update(
+        databaseApiClient.updateStatus(
             "/database-api/v1/payments/",
             paymentNotification.order,
             paymentNotification.paymentStatus
         )
         val qrStatus = qrService.getQrInfo(paymentNotification.qrId).qrStatus
-        databaseApiClient.update(
+        databaseApiClient.updateStatus(
             "/database-api/v1/qrs/",
             paymentNotification.qrId,
             qrStatus
