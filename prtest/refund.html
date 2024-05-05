@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Website</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <style> 
+        .item{display: flex; flex-direction: column; gap: 5px; width: 200px;}
+        #items{margin-top: 20px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 30px;}
+    </style>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center; /* Центрирует контент по вертикали */
+            justify-content: center; /* Центрирует контент по горизонтали */
+        }
+    </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+ </head>
+ <script>
+    function getReceipt(receiptNumber){
+        return fetch(`http://147.78.66.234:8081/payment-api/v1/receipt/sell/${receiptNumber}`) // сюда ссылку
+        //return fetch(`http://147.78.66.234:8081/payment-api/v1/receipt/sell/602159sell`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+ </script>
+ <script>
+    
+    function addNew(){
+        var items = document.getElementById('items')
+        var item = document.createElement('div')
+        item.classList = ['item']
+        var name = document.createElement('input')
+        name.classList = ['name']
+        var price = document.createElement('input')
+        price.classList = ['price']
+        var quantity = document.createElement('input')
+        quantity.classList = ['quantity']
+        var name_label = document.createElement('label')
+        name_label.innerText = 'Product Name'
+        var price_label = document.createElement('label')
+        price_label.innerText = 'Product Price'
+        var quantity_label = document.createElement('label')
+        quantity_label.innerText = 'Product Quantity'
+        item.appendChild(name_label)
+        item.appendChild(name)
+        item.appendChild(price_label)
+        item.appendChild(price)
+        item.appendChild(quantity_label)
+        item.appendChild(quantity)
+        items.appendChild(item)
+    }
+ </script>
+ <body>
+    <div>
+        <div>
+            <p id="receiptNumber"></p>
+            <p id="total"></p>
+            <p id="email"></p>
+            <div id="items_true">
+        
+            </div>
+            <div id="items">
+        
+            </div>
+            <button id="newItems" onclick="addNew()" class="btn btn-outline-success"> Add New </button> 
+            <button onclick="makeRefund()" class="btn btn-outline-danger"> Make refund </button>
+        </div>
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ </body>
+ <script>
+    // Get the query parameters from the URL
+    const par = window.location.pathname;
+    const urls = par.split('/');
+    const order = urls[urls.length - 1]
+   
+    // Use the id parameter as needed
+    var info;
+    getInfo()
+    async function getInfo(){
+       info=await getReceipt(order)
+       console.log(info)
+       var receiptNumber = document.getElementById('receiptNumber')
+       var total = document.getElementById('total')
+       var email = document.getElementById('email')
+
+       receiptNumber.textContent = "receipt number : " + info.receiptNumber
+       total.textContent = "sum : " + info.total
+       email.textContent = "email : " + info.client.email
+       
+       for(var i of info.items){
+            var item = document.createElement('div')
+            var name = document.createElement('p')
+            name.textContent = "name : " + i.name
+            var price = document.createElement('p')
+            price.textContent = "price : " + i.price
+            var quantity = document.createElement('p')
+            quantity.textContent = "quantity : " + i.quantity
+            var amount = document.createElement('p')
+            amount.textContent = "amount : " + i.amount
+            item.appendChild(name)
+            item.appendChild(price)
+            item.appendChild(quantity)
+            item.appendChild(amount)
+            items.appendChild(item)
+         }
+    }
+    </script>
+
+    <script>
+        function makeRefund(){
+            var items = document.getElementById('items')
+            var receiptItemDtos = []
+            var total = 0 
+            for(var item of items.children){
+                var name_input = item.getElementsByClassName('name')[0]
+                var price_input = item.getElementsByClassName('price')[0]
+                var quantity_input = item.getElementsByClassName('quantity')[0]
+                var name = name_input.value
+                var price = Number(price_input.value)
+                var quantity = Number(quantity_input.value)
+                var amount = price * quantity
+                receiptItemDtos.push({name, price, quantity, amount, vatType: "NONE"})
+                total += amount
+            }
+            fetch('http://147.78.66.234:8081/payment-api/v1/receipt/refund', {
+                method:'post', body:JSON.stringify({receiptItemDtos, total, receiptNumber:info.receiptNumber, email:info.client.email}), headers: {
+    'Content-Type': 'application/json;charset=utf-8'
+  },mode:"cors"
+            }).then((data)=>window.location = "http://localhost:8080/admin/refund/" + info.receiptNumber).catch((data)=>console.log(data))
+            //console.log(receiptNumber, email, info)
+        } 
+    </script>
+
+    <!-- <script>
+    import axios from 'axios'    
+    async function makeRefund1(receiptNumber, email, receiptItemDtos, total){
+        const postData = {
+            "receiptNumber": receiptNumber,
+            "email": email,
+            "receiptItemDtos": receiptItemDtos,
+            "total": total
+        };
+        axios.post('http://147.78.66.234:8081/payment-api/v1/receipt/refund', postData)
+        .then(response => {
+            console.log('Response:', response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        window.location = "http://localhost:8080/admin/refund/" + receiptNumber // менять есть другое место будет
+    }
+    </script> -->
+    <script>
+
+    </script>
+    
+    
+</html>

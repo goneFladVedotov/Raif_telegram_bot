@@ -4,12 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> QR Info</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
 <body>
 
 <h1>QR Info</h1>
 
 <style>
+
+#details{
+    width:1000px;
+    height:1000px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background-color: white;
+}
+
+#details.hidden{
+    display: none;
+}
+#details.visible{
+    display: initial;
+}
+
+#overlay{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left:0;
+    top:0;
+    opacity: 0.8;
+    background-color: black;
+}
+#overlay.hidden{
+    display: none;
+}
+#overlay.visible{
+    display: initial;
+}
+
 #table{
   border: 1px solid #eee;
   table-layout: fixed;
@@ -34,12 +70,11 @@
 #table tbody tr:nth-child(even){
   background: #F7F7F7;
 }
-
 </style>
 
 <script>
     async function fetchData() {
-        return fetch('http://147.78.66.234:9091/database-api/v1/qrs')
+        return fetch('http://147.78.66.234:9091/database-api/v1/payments')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -58,32 +93,93 @@ async function displayData(data) {
     console.log('Displaying data:', data); 
     var dataContainer = document.getElementById('data-body');
     dataContainer.innerHTML = ''
-    for(let i = 0; i<data.length; i++) {
+    for(let i = 1; i<data.length; i++) {
         const newTr = document.createElement("tr");
-        
+        newTr.onclick = ()=>showDetails(data[i].order)
         const newTh = document.createElement("td");
-        newTh.textContent = data[i].qrId;
+        newTh.textContent = data[i].order;
         newTr.appendChild(newTh);
         
         const newTh1 = document.createElement("td");
-        newTh1.textContent = data[i].qrStatus;
+        newTh1.textContent = data[i].amount;
         newTr.appendChild(newTh1);
 
         const newTh2 = document.createElement("td");
-        newTh2.textContent = data[i].payload;
+        const transactionTime = new Date(data[i].transactionDate);
+        newTh2.textContent = addZero(Number(transactionTime.getDate())) + '.' + addZero(Number(transactionTime.getMonth()) + 1) + '.' + transactionTime.getFullYear() + ' ' 
+                           + addZero(Number(transactionTime.getHours())) + ':' + addZero(Number(transactionTime.getMinutes())) + ':' + addZero(Number(transactionTime.getSeconds())); 
         newTr.appendChild(newTh2);
 
-        const newTh3 = document.createElement("td");
-        newTh3.textContent = data[i].qrUrl;
-        newTr.appendChild(newTh3);
 
-        const newTh4 = document.createElement("td");
-        newTh4.textContent = data[i].id;
-        newTr.appendChild(newTh4);
+        //const newTh2 = document.createElement("td");
+        
+        //newTh2.textContent = data[i].payload;
 
+        // var urlIndex = data[i].payload.lastIndexOf("?")
+        // var substring = data[i].payload.slice(urlIndex+1);
+        // var obj = JSON.parse('{"' + substring.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+
+        // newTh2.textContent = `${obj.sum/100} ${obj.cur}`;
+        // newTr.appendChild(newTh2);
+        // const newTh4 = document.createElement("td");
+        // newTh4.textContent = data[i].id;
+        // newTr.appendChild(newTh4);
         dataContainer.appendChild(newTr);
     }
 }
+</script>
+
+<script>
+    function addZero(num)
+    {
+        return num >=10 ? num: '0' + num;
+    }
+</script>
+
+<script>
+    async function showDetails(receiptNumber){
+        window.location = "http://localhost:8080/admin/order/" + receiptNumber // менять есть другое место будет
+    }
+</script>
+
+<script>
+    function getReceipt(receiptNumber){
+        return fetch(`http://147.78.66.234:8081/payment-api/v1/receipt/sell/${receiptNumber}`) // сюда ссылку
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+</script>
+
+<script>
+    function refund(order){
+        return fetch('') // сюда ссылку
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+</script>
+
+<script>
+    function hideDetails(){
+        var dataContainer = document.getElementById('details');
+        dataContainer.classList=['hidden']
+        var overlay = document.getElementById('overlay');
+        overlay.classList=['hidden']
+    
+    }
 </script>
 
 <script>
@@ -105,21 +201,39 @@ async function displayData(data) {
     window.onload = displayAll;
 </script>
 
-<button onclick="displayFilterStatus('PAID')"> Paid </button>
-<button onclick="displayFilterStatus('NEW')"> New </button>
-<button onclick="displayAll()"> All </button>
+
+<div id="overlay" class="hidden" onclick="hideDetails()">
+    
+</div>
+
+<div id="details" class="hidden">
+    <!-- <p id="qrId"> Тут тоже на то же что и там
+    </p>
+    <p id="status">
+    </p>
+    <p id="payload">
+    </p>
+    <p id="url">
+    </p> -->
+    <button onclick="hideDetails()"> close </button>
+    <button id="refundButton"> refund </button>
+</div> 
 
 <table id="table">
     <thead>
         <tr>
-            <th>QR ID</th>
-            <th>Status</th>
-            <th>Payload</th>
-            <th>URL</th>
-            <th>ID</th>
+            <th class="text-center">Order</th>
+            <th class="text-center">Sum</th>
+            <th class="text-center">Transaction Date</th>
+            <!-- <th>ID</th> -->
         </tr>
     </thead>
     <tbody id="data-body"></tbody>
 </table>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

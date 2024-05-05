@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      html,
+      body {
+          height: 100%;
+      }
+
+      body {
+          display: flex;
+          align-items: center; /* Центрирует контент по вертикали */
+          justify-content: center; /* Центрирует контент по горизонтали */
+      }
+  </style>
+
+ </head>
+ <script>
+   function getReceipt(receiptNumber){
+       return fetch(`http://147.78.66.234:8081/payment-api/v1/receipt/sell/${receiptNumber}`) // сюда ссылку
+       //return fetch(`http://147.78.66.234:8081/payment-api/v1/receipt/sell/602159sell`)
+           .then(response => {
+               if (!response.ok) {
+                   throw new Error(`HTTP error! Status: ${response.status}`);
+               }
+               return response.json();
+           })
+           .catch(error => {
+               console.error('Error fetching data:', error);
+           });
+   }
+</script>
+
+ <body>
+   
+   <div>
+      <div>
+         <p id="error"></p>
+         <p id="receiptNumber"></p>
+         <p id="total"></p>
+         <p id="status"></p>
+         <p id="email"></p>
+         <div id="items">
+         </div>
+         <button onclick="showDetails(order)" class="btn btn-outline-danger" id="refund_button"> Refund </button>
+      </div>
+      
+   </div>
+   <script>
+      // Get the query parameters from the URL
+      const par = window.location.pathname;
+      const urls = par.split('/');
+      const order = urls[urls.length - 1]
+     
+      // Use the id parameter as needed
+      var info;
+      getInfo()
+      async function getInfo(){
+         info=await getReceipt(order)
+         if(!info){
+            var error = document.getElementById('error')
+            error.innerText = 'Error: No Information'
+            var button = document.getElementById('refund_button')
+            button.classList = ['d-none']
+            console.log(button)
+         }
+         var receiptNumber = document.getElementById('receiptNumber')
+         var total = document.getElementById('total')
+         var status = document.getElementById('status')
+         var email = document.getElementById('email')
+         var items = document.getElementById('items')
+         receiptNumber.textContent = "receipt number : " + info.receiptNumber
+         total.textContent = "sum : " + info.total
+         status.textContent = "status : " + info.status
+         email.textContent = "email : " + info.client.email
+         for(var i of info.items){
+            var item = document.createElement('div')
+            var name = document.createElement('p')
+            name.textContent = "name : " + i.name
+            var price = document.createElement('p')
+            price.textContent = "price : " + i.price
+            var quantity = document.createElement('p')
+            quantity.textContent = "quantity : " + i.quantity
+            var amount = document.createElement('p')
+            amount.textContent = "amount : " + i.amount
+            item.appendChild(name)
+            item.appendChild(price)
+            item.appendChild(quantity)
+            item.appendChild(amount)
+            items.appendChild(item)
+         }
+      }
+
+     </script>
+     <script>
+      async function showDetails(receiptNumber){
+          window.location = "http://localhost:8080/admin/refund/" + receiptNumber // менять есть другое место будет
+      }
+      </script>
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ </body>
+
+</html>
