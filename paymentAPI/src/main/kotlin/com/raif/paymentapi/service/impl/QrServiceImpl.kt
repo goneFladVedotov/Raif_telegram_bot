@@ -75,10 +75,9 @@ class QrServiceImpl(
         return qrUrl
     }
 
-    override fun registerVariableQr(qrVariableDto: QrVariableDto): QRUrl {
+    override fun registerVariableQr(): QRUrl {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val qrCode = QRVariable()
-        qrCode.account = qrVariableDto.account
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
         return qrUrl

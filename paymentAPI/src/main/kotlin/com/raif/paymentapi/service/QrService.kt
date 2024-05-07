@@ -9,7 +9,7 @@ import raiffeisen.sbp.sdk.model.`in`.QRUrl
 interface QrService {
     fun registerDynamicQr(qrDynamicDto: QrDynamicDto): QRUrl
     fun registerStaticQr(qrStaticDto: QrStaticDto): QRUrl
-    fun registerVariableQr(qrVariableDto: QrVariableDto): QRUrl
+    fun registerVariableQr(): QRUrl
     fun getQrInfo(qrId: String): QRUrl
     fun getPaymentInfo(qrId: String): PaymentInfo
     fun checkQrExpirationDateTime()

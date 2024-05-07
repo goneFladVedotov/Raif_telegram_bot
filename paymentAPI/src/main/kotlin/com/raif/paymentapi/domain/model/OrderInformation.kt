@@ -3,7 +3,7 @@ package com.raif.paymentapi.domain.model
 import java.math.BigDecimal
 
 data class OrderInformation(
-    val id: String,
+    val orderId: String,
     val amount: BigDecimal,
     val comment: String,
     val status: String,

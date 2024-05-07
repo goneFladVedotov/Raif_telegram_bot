@@ -1,7 +1,9 @@
 package com.raif.paymentapi.web.controller.impl
 
 import com.raif.paymentapi.domain.dto.OrderDto
+import com.raif.paymentapi.domain.dto.RefundDto
 import com.raif.paymentapi.service.OrderService
+import com.raif.paymentapi.service.RefundService
 import com.raif.paymentapi.web.controller.OrderController
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -18,7 +20,8 @@ import raiffeisen.sbp.sdk.model.`in`.OrderInfo
     description = "Управляет заказами"
 )
 class OrderControllerImpl(
-    private val orderService: OrderService
+    private val orderService: OrderService,
+    private val refundService: RefundService
 ) : OrderController {
     @PostMapping
     @Operation(summary = "Создание заказа")
@@ -31,5 +34,11 @@ class OrderControllerImpl(
     override fun cancelOrder(@PathVariable orderId: String): ResponseEntity<*> {
         orderService.cancelOrder(orderId)
         return ResponseEntity.ok(null)
+    }
+
+    @PostMapping("/refund")
+    @Operation(summary = "Возврат заказа")
+    override fun refundOrder(@RequestBody refundDto: RefundDto): ResponseEntity<*> {
+        return ResponseEntity.ok(refundService.makeOrderRefund(refundDto))
     }
 }

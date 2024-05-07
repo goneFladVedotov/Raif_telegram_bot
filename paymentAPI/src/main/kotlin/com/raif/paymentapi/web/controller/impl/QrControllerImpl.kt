@@ -31,13 +31,13 @@ class QrControllerImpl(
     @Operation(summary = "Создание статического QR")
     override fun registerStaticQr(@Validated @RequestBody qrStaticDto: QrStaticDto): ResponseEntity<QRUrl> {
         return ResponseEntity.ok(qrService.registerStaticQr(qrStaticDto))
-    }
+    }*/
 
     @PostMapping("/variable")
     @Operation(summary = "Создание кассовой ссылки СБП")
-    override fun registerVariableQr(@Validated @RequestBody qrVariableDto: QrVariableDto): ResponseEntity<QRUrl> {
-        return ResponseEntity.ok(qrService.registerVariableQr(qrVariableDto))
-    }*/
+    override fun registerVariableQr(): ResponseEntity<QRUrl> {
+        return ResponseEntity.ok(qrService.registerVariableQr())
+    }
 
     @GetMapping("/{id}")
     @Operation(summary = "Получение информации о QR")
