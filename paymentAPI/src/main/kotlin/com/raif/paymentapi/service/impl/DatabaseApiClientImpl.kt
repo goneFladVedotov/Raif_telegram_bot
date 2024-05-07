@@ -74,7 +74,7 @@ class DatabaseApiClientImpl(
     override fun save(orderInformation: OrderInformation) {
         synchronized(saveOrderLock) {
             val response = restTemplate.postForEntity(
-                "$address/database-api/v1/order",
+                "$address/database-api/v1/orders",
                 orderInformation,
                 Any::class.java
             )
