@@ -1,7 +1,6 @@
-server:
-  port: 8081
-
 spring:
+  config:
+    import: optional:file:.env
   task:
     scheduling:
       pool:
@@ -9,14 +8,11 @@ spring:
 
 http:
   address:
-    database: "http://147.78.66.234:9091"
+    database: http://${HOST}:${SERVER_PORT}
 
 raif:
   sbpMerchantId: "MA622976"
   secretKey: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNQTYyMjk3NiIsImp0aSI6ImM5MTBjNGU4LTRhZmMtNDBlMS04ZGU3LWVlODg2N2JiOGU3NCJ9.rnPFEsixy9Wr4GhxT9D9s8dlBg5dRKWMLPfxl48oHAo"
 
-notification:
-  callback:
-    value: "https://pay-test.raif.ru/api/settings/v1/callback"
-  url:
-    value: "http://147.78.66.234:8081/payment-api/v1/notification"
+server:
+  port: ${SERVER_PORT}
