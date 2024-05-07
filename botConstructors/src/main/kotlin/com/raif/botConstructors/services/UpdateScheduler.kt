@@ -38,9 +38,16 @@ class UpdateScheduler(
                     receiptService.createSellReceipt(newOrder)
                     smartBotProService.orderPaid(newOrder)
                 }
+                if (newStatus == "EXPIRED" && order.type == "smartbotpro") {
+                    smartBotProService.orderExpired(newOrder)
+                }
+
                 if (newStatus == "PAID" && order.type == "botobot") {
                     receiptService.createSellReceipt(newOrder)
                     botobotService.paidOrder(newOrder.id)
+                }
+                if (newStatus == "EXPIRED" && order.type == "botobot") {
+                    botobotService.updateOrderStatus(newOrder.id, "30") // 30 — отменен
                 }
 
                 orderService.createOrder(newOrder)

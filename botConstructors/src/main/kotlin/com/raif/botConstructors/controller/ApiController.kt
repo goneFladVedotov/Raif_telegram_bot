@@ -102,7 +102,7 @@ class ApiController(
                 }
                 count += 1
                 if (count > 10) {
-                    throw Exception("Can not get ofd url")
+                    throw Exception("Не получилось найти ссылку на ОФД. Обновите страницу")
                 }
                 try {
                     TimeUnit.MILLISECONDS.sleep(300)
@@ -135,6 +135,9 @@ class ApiController(
                 content = content.replace("qrUrl", qr.qrUrl)
                 content = content.replace("order_id", id)
                 content = content.replace("payload", qr.payload)
+                if (type != "botobot") {
+                    content = content.replace("botobot", type)
+                }
                 return content
             } else if (qr.qrStatus == "PAID") {
                 val resource = ClassPathResource("templates/paid.html")
@@ -142,6 +145,8 @@ class ApiController(
                 content = content.replace("order_id", id)
                 content = content.replace("reciept_link", "http://147.78.66.234/bot-constructors/v1/receipt/$type/$id")
                 return content
+            } else if (qr.qrStatus == "EXPIRED") {
+                return "Заказ отменен"
             }
         } catch (e: Exception) {
             return "Failed to get order: ${e.message}"
