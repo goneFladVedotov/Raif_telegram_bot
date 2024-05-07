@@ -19,7 +19,7 @@ class QRCodeServiceImpl(private val restTemplate: RestTemplate) : QRCodeService 
     override fun createQR(amount: Double, orderId: String): QR {
         try {
             val url = "http://147.78.66.234:8081/payment-api/v1/qrs/dynamic"
-            val request = mapOf("amount" to amount, "order" to orderId)
+            val request = mapOf("amount" to amount, "order" to orderId, "qrExpirationDate" to "+10m")
             val response: ResponseEntity<QR> = restTemplate.postForEntity(url, request, QR::class.java)
             val qr: QR = response.body ?: throw Exception("Failed to create QR")
             qrMap[qr.qrId] = qr
@@ -39,14 +39,16 @@ class QRCodeServiceImpl(private val restTemplate: RestTemplate) : QRCodeService 
 
     override fun updateAll() {
         logger.info("Updating all QRs")
-        val url = "http://147.78.66.234:9091/database-api/v1/qrs"
-        val qrs: Array<QR> = restTemplate.getForObject(url)
-        for (qr: QR in qrs) {
-            if (qrMap.contains(qr.qrId)) {
-                qrMap[qr.qrId] = qr
-            }
+        qrMap.forEach { (order, qr) ->
+          if (qr.qrStatus == "NEW") {
+              try {
+                  val newQr: QR? = restTemplate.getForObject("http://147.78.66.234:8081/payment-api/v1/qrs/" + qr.qrId, QR::class.java)
+                  qrMap[order] = newQr!!
+              } catch (e: Exception) {
+                  logger.error("Error during update qr " + qr.qrId + " " + e.message)
+              }
+          }
         }
-        logger.info("All ${qrMap.size} QRs updated")
     }
     override fun refund(refundDto: RefundDto): RefundStatus {
         val url = "http://147.78.66.234:8081/payment-api/v1/qrs/refund"
