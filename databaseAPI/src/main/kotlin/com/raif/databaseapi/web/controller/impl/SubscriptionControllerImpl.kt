@@ -24,7 +24,7 @@ class SubscriptionControllerImpl(
         return ResponseEntity.ok(null)
     }
 
-    @PatchMapping("/{subscriptionId}")
+    @PutMapping("/{subscriptionId}")
     @Operation(summary = "Обновление статуса подписки")
     override fun update(@PathVariable subscriptionId: String, @RequestBody status: String): ResponseEntity<*> {
         subscriptionService.update(subscriptionId, status)
