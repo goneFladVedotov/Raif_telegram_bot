@@ -18,11 +18,4 @@ class CallbackControllerImpl(
     override fun handleCallback(@RequestBody notificationString: String) {
         notificationService.handleCallback(notificationString)
     }
-
-    @PostMapping("/config")
-    override fun configureCallback() {
-        notificationService.configureCallback()
-    }
-
-
 }
