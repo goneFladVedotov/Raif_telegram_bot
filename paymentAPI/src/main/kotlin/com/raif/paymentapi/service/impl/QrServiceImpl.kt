@@ -2,7 +2,6 @@ package com.raif.paymentapi.service.impl
 
 import com.raif.paymentapi.domain.dto.QrDynamicDto
 import com.raif.paymentapi.domain.dto.QrStaticDto
-import com.raif.paymentapi.domain.dto.QrVariableDto
 import com.raif.paymentapi.domain.model.PaymentInformation
 import com.raif.paymentapi.domain.model.QrInformation
 import com.raif.paymentapi.service.DatabaseApiClient

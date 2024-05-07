@@ -3,7 +3,6 @@ package com.raif.paymentapi.service.impl
 import com.raif.paymentapi.service.DatabaseApiClient
 import com.raif.paymentapi.service.NotificationService
 import com.raif.paymentapi.service.QrService
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import raiffeisen.sbp.sdk.model.PaymentNotification
 import raiffeisen.sbp.sdk.util.SbpUtil
