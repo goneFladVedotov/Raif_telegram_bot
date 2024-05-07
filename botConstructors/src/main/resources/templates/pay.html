@@ -12,7 +12,7 @@
                 if (xhr.readyState === 4) {
                   if (xhr.status === 200) {
                     // Проверяем ответ сервера
-                    if (xhr.responseText === 'PAID') {
+                    if (xhr.responseText !== 'NEW') {
                       // Если ответ PAID, обновляем страницу
                       location.reload();
                     }
