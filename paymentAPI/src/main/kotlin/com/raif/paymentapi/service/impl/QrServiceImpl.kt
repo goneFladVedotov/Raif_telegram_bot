@@ -2,7 +2,6 @@ package com.raif.paymentapi.service.impl
 
 import com.raif.paymentapi.domain.dto.QrDynamicDto
 import com.raif.paymentapi.domain.dto.QrStaticDto
-import com.raif.paymentapi.domain.dto.QrVariableDto
 import com.raif.paymentapi.domain.model.PaymentInformation
 import com.raif.paymentapi.domain.model.QrInformation
 import com.raif.paymentapi.service.DatabaseApiClient
@@ -75,10 +74,9 @@ class QrServiceImpl(
         return qrUrl
     }
 
-    override fun registerVariableQr(qrVariableDto: QrVariableDto): QRUrl {
+    override fun registerVariableQr(): QRUrl {
         val sbpClient = SbpClient(SbpClient.TEST_URL, sbpMerchantId, secretKey)
         val qrCode = QRVariable()
-        qrCode.account = qrVariableDto.account
         val qrUrl = sbpClient.registerQR(qrCode)
         databaseApiClient.save(QrInformation(qrUrl.qrId, qrUrl.qrStatus, qrUrl.payload, qrUrl.qrUrl))
         return qrUrl

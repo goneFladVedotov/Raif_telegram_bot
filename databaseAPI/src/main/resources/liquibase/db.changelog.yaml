@@ -6,3 +6,11 @@ databaseChangeLog:
         - sqlFile:
             path: /changesets/01-init-tables.sql
             relativeToChangelogFile: true
+  - changeSet:
+      id : 02-init_orders_table
+      author: vlad_fedotov
+      changes:
+        - sqlFile:
+            path: /changesets/02-init_orders_table.sql
+            relativeToChangelogFile: true
+

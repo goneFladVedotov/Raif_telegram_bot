@@ -26,7 +26,7 @@ class RefundControllerImpl(
     }
 
     @Operation(summary = "Обновление статуса возврата")
-    @PatchMapping("/{refundId}")
+    @PutMapping("/{refundId}")
     override fun updateRefundStatus(
         @PathVariable("refundId") refundId: String,
         @RequestBody refundStatus: String

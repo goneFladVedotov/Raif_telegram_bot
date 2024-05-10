@@ -26,7 +26,7 @@ class PaymentControllerImpl(
     }
 
     @Operation(summary = "Обновление статуса платежа")
-    @PatchMapping("/{qrId}")
+    @PutMapping("/{qrId}")
     override fun updatePaymentInfo(@PathVariable("qrId") qrId: String,
                                    @RequestBody paymentStatus: String): ResponseEntity<*> {
         paymentService.updatePaymentInfo(qrId, paymentStatus)
