@@ -1,5 +1,5 @@
 ### !!История коммитов пропала при слиянии с main.
-Сами комиты находятся в ветках `feature/online-cashier`,  `fea  ture/online-cashier-remaster`, `online-cashier-remaster`
+Сами комиты находятся в ветках `feature/online-cashier`,  `feature/online-cashier-remaster`, `online-cashier-remaster`
 
 
 ## Кассовый бот
